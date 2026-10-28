@@ -63,6 +63,28 @@ Order of work guarantees no localhost jargon survives into the rebuild:
 
 Two layers: surface = plain sentences, numbers, buttons (change rules / approve-refuse / show proof). Jargon (nonces, hashes, selectors) lives ONLY behind "Show the proof", enforced by the style gate's banned-words list before redesign starts. Server, contract, 330 tests, signing flow: unchanged.
 
+## HALLMARK DEMOTED — user ruling, 2026-10-28
+
+User feedback: Hallmark-driven output "looks DEAD — doesn't feel responsive, looks like a receipt." Ruling: **only the slop test survives** (58-gate anti-AI-slop checklist, used as QA on every build). Hallmark's design flow, genres, themes, macrostructures, and the audience/use-case/tone questions are NOT used. No more design questionnaires — user reacts to built artifacts.
+
+Design direction for the premium site: **alive** — motion, feedback, responsiveness to the user — while staying trustworthy. Revised stack:
+
+- **GSAP: IN** (promoted from bench) — the aliveness engine; real library, free, vanilla-compatible.
+- **emilkowalski/skills: IN** — animation/interaction taste layer.
+- **design.md: IN** — brand lock across site + console.
+- **Hallmark slop test: QA gate only.**
+- The Cobalt console mockup (mockups/track4-console.html) stays valid as the *console's* calm baseline; the site gets the living layer.
+
+## FINAL tool decision (settled 2026-10-28, covers BOTH the premium site and the console redesign)
+
+- **IN — `google-labs-code/design.md`:** one DESIGN.md locks tokens (color/type/spacing) so site + console read as one brand; `designmd lint` catches drift (pairs with check-style.mjs).
+- **IN — `emilkowalski/skills`:** motion + taste rules for site feel and console state-feedback animations; vanilla-JS compatible.
+- **BENCH — `greensock/gsap-skills`:** only if CSS can't achieve a wanted scroll moment on the site. Default CSS-first.
+- **OUT — `leonxlnx/taste-skill`:** overlaps Hallmark, which governs.
+- **OUT — `react-bits` (React), `canvas-ui` (experimental WebGL + Chrome flags), `scroll-world` (paid AI-video landing pages), `open-design` (separate heavy app).**
+
+Architecture: static site (the face) → console + server (the product, dynamic) → Starknet (the truth). The static site can read live chain state via public Sepolia RPC from the browser — no server needed for the receipts wall.
+
 ## The feel — settled
 
 The 6 rules above are the spec. Two ways forward:
