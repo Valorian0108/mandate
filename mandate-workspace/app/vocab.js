@@ -260,7 +260,7 @@ export function plainError(message) {
   if (/could not record the transaction/i.test(m)) return 'Your account app sent it, but this app could not record the result. Open the receipt to see what happened.';
   if (/chain has no transaction|cannot read back/i.test(m)) return 'What your account app sent never arrived at your account, and nothing there has heard of it. Nothing was recorded and nothing changed. Trying again prepares a fresh send.';
   if (/the transaction reverted|it did not go through/i.test(m)) return 'It did not go through on your account. Nothing was changed.';
-  if (/had not confirmed within|not confirmed within/i.test(m)) return 'It was sent, but the confirmation is taking a while. The record says so honestly.';
+  if (/had not confirmed( it)? within|not confirmed( it)? within/i.test(m)) return 'It was sent, but the confirmation is taking a while. The record says so honestly.';
   if (/failed to fetch|networkerror|did not answer/i.test(m)) return 'The app cannot reach its own server. Is it still running?';
   // crypto-surface:end
   return 'That did not work. Nothing was changed.';
@@ -275,7 +275,7 @@ export function plainError(message) {
 export function failureKind(message) {
   const m = String(message ?? '');
   // crypto-surface:start
-  if (/had not confirmed within|not confirmed within/i.test(m)) return 'stalled';
+  if (/had not confirmed( it)? within|not confirmed( it)? within/i.test(m)) return 'stalled';
   if (/cancel|user rejected|user denied|declined the connection|rejected the|denied the|turned down/i.test(m)) return 'cancelled';
   // crypto-surface:end
   return 'failed';
