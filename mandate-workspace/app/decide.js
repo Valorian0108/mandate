@@ -245,12 +245,39 @@ export async function submitViaWallet({ signer, plan, onStage }) {
     contractAddress: wire.to, entrypoint: wire.entrypoint, calldata: wire.calldata,
   }]);
   onStage?.('record');
-  const out = await outsideRecord(plan.proposalId, txHash);
+  const out = await recordWithGrace(plan.proposalId, txHash);
   if (!out?.recorded) {
     throw new Error('the server could not record the transaction your wallet sent');
   }
   return { txHash, record: out, wire };
 }
+
+/**
+ * Adopt the sent transaction, tolerating propagation lag: a chain reader that
+ * has not seen the transaction yet is not the same as a chain that refused it,
+ * so THIS error alone gets a bounded grace (four reads over ~15s). Every other
+ * error throws on the first attempt, and if the transaction never appears the
+ * failure is exactly as loud as before. Recording is idempotent per hash on the
+ * server, so a grace retry can never create a second record.
+ */
+async function recordWithGrace(proposalId, txHash) {
+  const GRACE_READS = 4;
+  let lastError = null;
+  for (let attempt = 0; attempt < GRACE_READS; attempt++) {
+    try {
+      return await outsideRecord(proposalId, txHash);
+    } catch (e) {
+      lastError = e;
+      if (!/chain has no transaction|cannot read back/i.test(String(e?.message ?? e))) {
+        throw e;
+      }
+      if (attempt < GRACE_READS - 1) await sleep(4000);
+    }
+  }
+  throw lastError;
+}
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // ---------------------------------------------------------------- machine html
 
