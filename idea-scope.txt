@@ -20,6 +20,15 @@ This app is where you give it an allowance, where anything over that
 allowance physically stops until you approve it, and where you watch
 every receipt land.
 
+   Why the name "mandate": a mandate is formal authority to act on
+   someone's behalf, within limits — a power of attorney. In this
+   product the mandate is the actual rules bundle stored on-chain:
+   who the agent is, what it may spend per purchase and per month,
+   whom it may pay, and who can change any of it (only the owner,
+   only by signature). Every payment is checked against it by the
+   money rails themselves — that is why no server, hacker, or company
+   can bend it.
+
 2) THE PROBLEM
 AI agents are starting to act in the real world: purchasing, paying for
 services, running operations. Giving an AI access to money today means
