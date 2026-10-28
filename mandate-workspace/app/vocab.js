@@ -238,14 +238,92 @@ export function plainError(message) {
   // sentence rather than the raw one.
   if (/recipient must be/i.test(m)) return 'Pick a store from the list.';
   if (/amount must be a positive whole number/i.test(m)) return 'Enter a whole number of units, more than zero.';
+  if (/positive whole number/i.test(m)) return 'Enter a whole number of units, more than zero.';
+  if (/carries no recipient/i.test(m)) return 'This request has no store to approve.';
   if (/is already (APPROVED_ONCE|AMENDED|DECLINED|SUCCEEDED|REVERTED)/i.test(m)) return 'You have already decided this one.';
   if (/only a pending proposal/i.test(m)) return 'This one is already decided.';
   if (/signature does not verify/i.test(m)) return 'That confirmation did not match. Nothing changed.';
   if (/no proposal/i.test(m)) return 'That request is not here any more.';
   if (/did not answer within/i.test(m)) return 'The read took too long. Nothing changed. Try again.';
-  if (/refusing to sign a pointless/i.test(m)) return 'That would change nothing, so there is nothing to confirm.';
+  if (/refusing to sign a pointless|is not above the current/i.test(m)) return 'That value would change nothing, so it was refused. Pick a number above the current one.';
+  if (/would exceed the window cap|would sit below the per-call cap/i.test(m)) return 'Those two limits would contradict each other, so it was refused.';
   if (/cannot build the on-chain call/i.test(m)) return 'That change is not possible right now.';
+  if (/no starknet wallet found/i.test(m)) return 'This browser has no account app to confirm with. Open this page in the browser that has yours.';
+  if (/declined the connection|user rejected|user denied|rejected the|denied the|cancel/i.test(m)) return 'You turned the confirmation down. Nothing changed.';
+  if (/wrong wallet|does not hold the owner key|is not the controller/i.test(m)) return 'That account app is not the one your rules name as owner. Nothing can be confirmed with it.';
+  if (/the wallet is on|switch the wallet's network/i.test(m)) return 'Your account app is on the wrong network. Switch it to the one these rules live on, then try again.';
+  if (/cannot read which network/i.test(m)) return 'This app could not tell which network your account app is on, so it refused to guess.';
+  if (/different digests/i.test(m)) return 'This app and the server disagree about what you are confirming. It refused to continue. Nothing changed.';
+  if (/changed after the preview|moved after the preview/i.test(m)) return 'The decision changed while it was being confirmed. Review it again.';
+  if (/the live account is not loaded|live mandate is not loaded|owner key on chain is not loaded|refusing to connect blind/i.test(m)) return 'Your live rules are not fully read yet. Wait a moment, then try again.';
+  if (/window|nonce/i.test(m)) return 'The confirmation window closed before it finished. Nothing was sent twice; try again and it prepares a fresh one.';
+  if (/could not record the transaction/i.test(m)) return 'Your account app sent it, but this app could not record the result. Open the receipt to see what happened.';
+  if (/the transaction reverted|it did not go through/i.test(m)) return 'It did not go through on your account. Nothing was changed.';
+  if (/had not confirmed within|not confirmed within/i.test(m)) return 'It was sent, but the confirmation is taking a while. The record says so honestly.';
   if (/failed to fetch|networkerror|did not answer/i.test(m)) return 'The app cannot reach its own server. Is it still running?';
   // crypto-surface:end
   return 'That did not work. Nothing was changed.';
+}
+
+/**
+ * What KIND of failure the machine reported, for flow control only: the popup
+ * shows different honest endings for "you cancelled", "it was sent but has not
+ * confirmed" and "it failed". Recognition happens inside the fence; the returned
+ * category words are plain and carry no machine text.
+ */
+export function failureKind(message) {
+  const m = String(message ?? '');
+  // crypto-surface:start
+  if (/had not confirmed within|not confirmed within/i.test(m)) return 'stalled';
+  if (/cancel|user rejected|user denied|declined the connection|rejected the|denied the|turned down/i.test(m)) return 'cancelled';
+  // crypto-surface:end
+  return 'failed';
+}
+
+/**
+ * The side effects of a decision, in plain sentences. The machine's own list is
+ * always shown verbatim in the popup's machine strip; this is the translation a
+ * person reads BEFORE confirming. An effect this file does not recognise is left
+ * out here and still appears there, raw - nothing is hidden, only untranslated.
+ */
+export function sideEffectsPlain(sideEffects = []) {
+  const out = [];
+  for (const raw of sideEffects.map(String)) {
+    // crypto-surface:start
+    let m;
+    if (/RESTARTS the spending window/i.test(raw)) {
+      out.push("Making this change restarts this month's spending count: what has been spent goes back to zero.");
+      continue;
+    }
+    if ((m = /^per-call cap: (\d+) -> (\d+)$/.exec(raw))) {
+      out.push(`Your per-purchase limit goes from ${units(m[1])} to ${units(m[2])}.`);
+      continue;
+    }
+    if ((m = /^window cap: (\d+) -> (\d+)$/.exec(raw))) {
+      out.push(`This month's budget goes from ${units(m[1])} to ${units(m[2])}.`);
+      continue;
+    }
+    if (/per-call cap stays at/i.test(raw)) {
+      out.push('Your per-purchase limit stays as it is. Raising it is a separate decision.');
+      continue;
+    }
+    if (/added to the allowlist permanently/i.test(raw)) {
+      out.push('This adds the store to your approved list permanently, until you remove it. It is not a one-time exception.');
+      continue;
+    }
+    if (/the owner \(not the agent\) makes this transfer/i.test(raw)) {
+      out.push('You make this payment yourself, once. Your assistant gains no new power.');
+      continue;
+    }
+    if (/the block stands/i.test(raw)) {
+      out.push('It stays refused. Nothing is paid, and your no is recorded.');
+      continue;
+    }
+    if (/already the live policy/i.test(raw)) {
+      out.push('This change is already live on your account. Confirming it only adopts the record.');
+      continue;
+    }
+    // crypto-surface:end
+  }
+  return out;
 }

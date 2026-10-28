@@ -88,8 +88,10 @@ export const outsidePlan = (proposalId) => call('/api/outside/plan', { proposalI
 /** Relay a wallet-signed decision. */
 export const outsideSubmit = (payload) => call('/api/outside/submit', payload);
 
-/** The wire form of a wallet-carried decision (for the wallet to sign). */
-export const outsideWire = (proposalId) => call('/api/outside/wire', { proposalId });
+/** The wire form of a wallet-carried decision: the server re-verifies the
+ *  authorization against the chain and returns the call UNRELAYED (OBS-31). */
+export const outsideWire = (proposalId, authorization) =>
+  call('/api/outside/wire', { proposalId, authorization });
 
 /** Adopt a decision the wallet submitted itself, read back from the network. */
 export const outsideRecord = (proposalId, txHash) =>

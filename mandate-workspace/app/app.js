@@ -11,13 +11,23 @@
 // Data: read live from the account through the tested server's API. Nothing
 // here is stored or faked; a failed read is shown as a failed read.
 
-import { getMandate, getProposals, fileAsk } from './data.js';
+import { getMandate, getProposals, fileAsk, pollReceipt } from './data.js';
 import {
   plainError, verdictWord, verdictClass, verdictSentence, rulePhrase,
-  statusWord, statusClass, resolutionWord, submissionWord,
-  units, pct, dayText, daysUntil, agoText,
+  statusWord, statusClass, statusSentence, resolutionWord, submissionWord,
+  units, pct, dayText, daysUntil, agoText, failureKind, sideEffectsPlain,
 } from './vocab.js';
 import { STORES, storeName, storeWhat, storeFor, isApproved } from './stores.js';
+// The machine layer for decisions. Every function here either does the
+// confirmed-elsewhere crypto work or renders the dark machine strips; this file
+// only ever calls them and shows their HTML, so the screens stay plain.
+import {
+  walletChoices, connectOwnerWallet, resolutionFromChoice, buildPreview,
+  previewIsCurrent, signResolution, planSubmission, controllerIs, submitViaWallet,
+  receiptOutcome, receiptErrorMessage,
+  reviewMachineHtml, walletMachineHtml, walletPickerHtml, stageMachineHtml,
+  planMachineHtml, receiptMachineHtml, resolutionMachineHtml, errorMachineHtml,
+} from './decide.js';
 
 // ------------------------------------------------------------------ state
 
@@ -38,6 +48,37 @@ const S = {
   ask: null,       // last ask result: { kind: 'ok'|'error', ... }
   askForm: null,   // remembered picker values, restored after re-render
   asking: false,
+
+  // The Waiting screen's decision state. Machine-layer objects (the preview,
+  // the plan, the connected account app) live here untouched; screens only
+  // hand them back to decide.js. Deliberate survivals across decisions:
+  // signer/walletInfo (a connected account app stays connected, the console's
+  // rule) and `done` (the last receipt stays available until replaced).
+  waiting: {
+    id: null,          // the proposal being decided (#/waiting/<id>)
+    choice: 'once',    // once | amend | decline
+    form: null,        // { kind, cap, windowCap, recipient }
+    formTouched: false,
+    preview: null,
+    building: false,
+    error: null,
+    modal: null,       // { stage, ... }
+    walletApps: [],
+    walletId: null,
+    signer: null,
+    walletInfo: null,
+    resolved: false,
+    confirmation: null,
+    plan: null,
+    txHash: null,
+    record: null,
+    receipt: null,
+    receiptTries: 0,
+    doneKind: null,
+    done: null,
+    running: false,
+    flowResumed: false,
+  },
 };
 
 // How old a live read may be before entering a screen triggers a new one.
@@ -59,6 +100,11 @@ const els = {
   drawerBody: $('drawer-body'),
   drawerClose: $('drawer-close'),
   backdrop: $('drawer-backdrop'),
+  modal: $('modal'),
+  modalBackdrop: $('modal-backdrop'),
+  modalTitle: $('modal-title'),
+  modalBody: $('modal-body'),
+  modalClose: $('modal-close'),
 };
 
 /** Escape anything that came from a machine before it goes near the DOM. */
@@ -78,20 +124,63 @@ const ROUTES = {
 
 function routeFromHash() {
   const h = (location.hash || '').replace(/^#\/?/, '').split('?')[0];
-  return Object.prototype.hasOwnProperty.call(ROUTES, h) ? h : 'rules';
+  const cut = h.indexOf('/');
+  const base = cut === -1 ? h : h.slice(0, cut);
+  const param = cut === -1 ? null : (h.slice(cut + 1) || null);
+  return {
+    route: Object.prototype.hasOwnProperty.call(ROUTES, base) ? base : 'rules',
+    param,
+  };
 }
 
 function navigate() {
-  S.route = routeFromHash();
+  const { route, param } = routeFromHash();
+  S.route = route;
   for (const a of document.querySelectorAll('.nav-item')) {
     if (a.dataset.route === S.route) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   }
+  if (route === 'waiting') setWaitingTarget(param);
   const r = ROUTES[S.route];
   els.title.textContent = r.title;
   els.sub.textContent = r.sub;
   ensureRouteData();
   render();
+}
+
+function proposalById(id) {
+  return (S.proposals ?? []).find((p) => p.id === id) ?? null;
+}
+
+/** Enter (or leave) a decision. Never yanks the screen during a live flow. */
+function setWaitingTarget(id) {
+  const w = S.waiting;
+  if (w.id === id) return;
+  if (w.running) return;
+  resetDecision(id);
+  maybeInitDecisionForm();
+}
+
+function resetDecision(id) {
+  const w = S.waiting;
+  w.id = id;
+  w.choice = 'once';
+  w.form = null;
+  w.formTouched = false;
+  w.preview = null;
+  w.building = false;
+  w.error = null;
+  w.modal = null;
+  w.resolved = false;
+  w.confirmation = null;
+  w.plan = null;
+  w.txHash = null;
+  w.record = null;
+  w.receipt = null;
+  w.receiptTries = 0;
+  w.doneKind = null;
+  w.flowResumed = false;
+  // signer, walletInfo, walletApps, walletId and done deliberately survive.
 }
 
 function ensureRouteData() {
@@ -119,6 +208,7 @@ async function loadMandate(force = false) {
   } finally {
     S.loadingMandate = false;
     renderStatus();
+    maybeInitDecisionForm();
     render();
   }
 }
@@ -138,6 +228,7 @@ async function loadProposals(force = false) {
   } finally {
     S.loadingProposals = false;
     updateWaitBadge();
+    maybeInitDecisionForm();
     render();
   }
 }
@@ -263,7 +354,7 @@ function askResultHtml() {
   if (d.verdict === 'ALLOW') {
     note = 'This was a check against your rules. Nothing has been paid.';
   } else if (a.proposalId) {
-    note = 'It is now waiting for you, and nothing has been paid. <a href="#/waiting">Decide it</a>.';
+    note = `It is now waiting for you, and nothing has been paid. <a href="#/waiting/${esc(a.proposalId)}">Decide it</a>.`;
   } else {
     note = 'Nothing has been paid.';
   }
@@ -423,7 +514,7 @@ function renderRequests() {
       <div class="req-side">
         <span class="chip ${statusClass(p.status)}">${esc(statusWord(p.status))}</span>
         ${outcome ? `<div class="req-outcome">${esc(outcome)}</div>` : ''}
-        ${p.status === 'PENDING' ? '<a class="req-link" href="#/waiting">Decide</a>' : ''}
+        ${p.status === 'PENDING' ? `<a class="req-link" href="#/waiting/${esc(p.id)}">Decide</a>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -440,27 +531,349 @@ function renderRequests() {
   </div>`;
 }
 
-// ------------------------------------------------------------------ placeholders (honest)
+// ------------------------------------------------------------------ waiting screen
 
-function renderWaiting() {
-  const pending = S.proposals ? S.proposals.filter((p) => p.status === 'PENDING').length : null;
-  const now = pending === null
-    ? 'This screen is being built next.'
-    : pending === 1
-      ? 'Right now 1 ask is waiting on you.'
-      : `Right now ${pending} asks are waiting on you.`;
-  return `<div class="card soon-card">
+const EXECUTABLE = ['APPROVED_ONCE', 'AMENDED'];
+
+/** The defaults for the amendment subform, ported from the tested console
+ *  (its initForm): every suggestion is computed from the LIVE numbers. */
+function initDecisionForm(p) {
+  const m = S.mandate?.mandate;
+  const c = p.request?.context ?? {};
+  const allowed = m?.allowedRecipients ?? [];
+  const recipientAllowed = isApproved(c.recipient, allowed);
+  let kind = p.blockedBecause?.code === 'recipient-not-allowed' && !recipientAllowed
+    ? 'allow-recipient' : 'raise-per-call-cap';
+  let cap = '10';
+  let winCap = '100';
+  if (m) {
+    const current = BigInt(m.maxPerCall);
+    const windowCap = BigInt(m.maxPerWindow);
+    let suggested = current + 10n;
+    let winSuggested = windowCap + 50n;
+    let amount = null;
+    try {
+      amount = BigInt(c.amount);
+      if (amount > current) suggested = amount;
+      if (amount > winSuggested) winSuggested = amount;
+    } catch { /* not every ask carries a number; the default suggestion stands */ }
+    if (suggested > windowCap) suggested = windowCap;
+    // The dead corner (OBS-35): when the ask does not fit under this month's
+    // budget, raising the per-purchase limit has no valid value at all - the
+    // budget raise is the change that unblocks it, and the limit raise becomes
+    // decidable afterwards as a separate decision.
+    if (amount !== null && amount > windowCap) kind = 'raise-window-cap';
+    cap = suggested.toString();
+    winCap = winSuggested.toString();
+  }
+  if (m && BigInt(m.maxPerCall) >= BigInt(m.maxPerWindow) && kind === 'raise-per-call-cap') {
+    kind = 'raise-window-cap';
+  }
+  if (kind === 'allow-recipient' && recipientAllowed) kind = 'raise-window-cap';
+  return { kind, cap, windowCap: winCap, recipient: c.recipient ?? null };
+}
+
+/** Re-derive the form defaults once the live rules arrive, until the user
+ *  has touched the form - after that their numbers are the truth. */
+function maybeInitDecisionForm() {
+  const w = S.waiting;
+  if (S.route !== 'waiting' || !w.id || w.formTouched) return;
+  const p = proposalById(w.id);
+  if (p && p.status === 'PENDING' && S.mandate?.mandate) w.form = initDecisionForm(p);
+}
+
+/** Which rule changes are actually on offer for this ask. An option that the
+ *  live rules make impossible (or pointless) is not offered at all. */
+function amendKindsFor(p, m) {
+  const out = [];
+  const recipient = p.request?.context?.recipient;
+  if (recipient && !isApproved(recipient, m.allowedRecipients ?? [])) {
+    out.push({
+      value: 'allow-recipient',
+      label: `Add ${storeName(recipient)} to your approved list`,
+      needsValue: false,
+      note: 'This is permanent until you remove it. It is not a one-time exception.',
+    });
+  }
+  const perCall = BigInt(m.maxPerCall);
+  const windowCap = BigInt(m.maxPerWindow);
+  if (perCall < windowCap) {
+    out.push({
+      value: 'raise-per-call-cap',
+      label: 'Raise your per-purchase limit',
+      needsValue: true,
+      field: 'cap',
+      valueLabel: 'New per-purchase limit',
+      note: `Now ${units(m.maxPerCall)}. It must be more than ${units(m.maxPerCall)} ` +
+        `and no more than ${units(m.maxPerWindow)}.`,
+    });
+  }
+  out.push({
+    value: 'raise-window-cap',
+    label: "Raise this month's budget",
+    needsValue: true,
+    field: 'windowCap',
+    valueLabel: 'New monthly budget',
+    note: `Now ${units(m.maxPerWindow)}. Your per-purchase limit stays ${units(m.maxPerCall)}; ` +
+      'raising it is a separate decision.',
+  });
+  return out;
+}
+
+function waitRowHtml(p, actionHtml) {
+  const recipient = p.request?.context?.recipient;
+  const what = storeWhat(recipient);
+  return `<div class="req">
+    <div class="req-main">
+      <div class="req-name">${esc(storeName(recipient))}${what ? ` <span class="req-what">${esc(what)}</span>` : ''}</div>
+      <div class="req-when">asked ${dayText((p.createdAt ?? 0) / 1000)} · ${esc(agoText(p.createdAt))}</div>
+    </div>
+    <div class="req-mid">
+      <div class="req-amount">${esc(units(p.request?.context?.amount))}</div>
+      <div class="req-rule">${esc(rulePhrase(p.blockedBecause?.code))}</div>
+    </div>
+    <div class="req-side">${actionHtml}</div>
+  </div>`;
+}
+
+function justDecidedHtml(d) {
+  const p = proposalById(d.proposalId);
+  const who = p
+    ? `${storeName(p.request?.context?.recipient)} · ${units(p.request?.context?.amount)}`
+    : 'Your last decision';
+  const chip = d.kind === 'decline'
+    ? '<span class="chip chip-quiet">you said no</span>'
+    : '<span class="chip chip-allow">recorded</span>';
+  return `<div class="card">
     <div class="card-head">
       <div>
-        <div class="card-label">being built next</div>
-        <div class="card-title">Your decisions live here</div>
+        <div class="card-label">just decided</div>
+        <div class="card-title">${esc(who)}</div>
+      </div>
+      ${chip}
+    </div>
+    <div class="card-body">
+      <p>${esc(DONE_TEXT[d.kind] ?? DONE_TEXT.amend)}</p>
+      <p class="decision-actions"><button class="btn" type="button" data-action="receipt">Show the receipt</button></p>
+    </div>
+  </div>`;
+}
+
+function renderWaiting() {
+  const w = S.waiting;
+  if (w.id) return renderDecision();
+  if (S.loadingProposals && !S.proposals) return skelHtml(2);
+  if (!S.proposals) return errorCardHtml(S.proposalsError);
+
+  const byNewest = (a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0);
+  const pending = S.proposals.filter((p) => p.status === 'PENDING').sort(byNewest);
+  const inflight = S.proposals
+    .filter((p) => EXECUTABLE.includes(p.status) && !finalSubmissionFor(p.id))
+    .sort(byNewest);
+  const doneCard = w.done ? justDecidedHtml(w.done) : '';
+
+  if (!pending.length && !inflight.length) {
+    return `${doneCard}<div class="card"><div class="empty">Nothing is waiting on you. When your assistant asks for something your rules do not clear on the spot, it shows up here, and nothing moves until you decide.</div></div>`;
+  }
+
+  const inflightCard = inflight.length ? `<div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-label">decided, not landed yet</div>
+        <div class="card-title">Finish these</div>
+      </div>
+      <span class="chip chip-quiet tabular">${inflight.length}</span>
+    </div>
+    <div>${inflight.map((p) => waitRowHtml(p,
+    `<a class="btn btn-sm" href="#/waiting/${esc(p.id)}">Finish it</a>`)).join('')}</div>
+    <div class="card-body"><p class="card-note note-flat">Your decision is recorded, but the change itself has not landed on your account yet. Until it lands, your rules read exactly as before.</p></div>
+  </div>` : '';
+
+  const pendingCard = pending.length ? `<div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-label">nothing moves until you decide</div>
+        <div class="card-title">Waiting on you</div>
+      </div>
+      <span class="chip chip-quiet tabular">${pending.length}</span>
+    </div>
+    <div>${pending.map((p) => waitRowHtml(p,
+    `<a class="btn btn-sm" href="#/waiting/${esc(p.id)}">Decide</a>`)).join('')}</div>
+  </div>` : '';
+
+  return `${doneCard}${inflightCard}${pendingCard}`;
+}
+
+// ------------------------------------------------------------------ decision view
+
+function askFactsCardHtml(p) {
+  const c = p.request?.context ?? {};
+  const m = S.mandate?.mandate;
+  const left = m ? Math.max(0, Number(m.maxPerWindow) - Number(m.spentInWindow)) : undefined;
+  const sentence = verdictSentence('DENY', p.blockedBecause?.code, {
+    limit: m ? Number(m.maxPerCall) : undefined,
+    left,
+    store: storeName(c.recipient),
+  });
+  const what = storeWhat(c.recipient);
+  return `<div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-label">waiting on you</div>
+        <div class="card-title">${esc(storeName(c.recipient))} wants ${esc(units(c.amount))}</div>
+      </div>
+      <span class="chip chip-ask">waiting on you</span>
+    </div>
+    <div class="card-body">
+      <div class="fact-list">
+        <div class="fact"><span class="fact-k">Store</span><span class="fact-v">${esc(storeName(c.recipient))}${what ? ` · ${esc(what)}` : ''}</span></div>
+        <div class="fact"><span class="fact-k">Amount</span><span class="fact-v">${esc(units(c.amount))}</span></div>
+        <div class="fact"><span class="fact-k">Asked</span><span class="fact-v">${dayText((p.createdAt ?? 0) / 1000)} (${esc(agoText(p.createdAt))})</span></div>
+      </div>
+      <div class="verdict verdict-deny">
+        <div class="verdict-head"><span class="chip chip-deny">blocked</span></div>
+        <div class="verdict-line">${esc(sentence)}</div>
+        <div class="verdict-note">Nothing has been paid. It waits here until you decide, and your rules keep holding in the meantime.</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function choiceHtml(value, title, desc) {
+  const on = S.waiting.choice === value;
+  return `<label class="choice${on ? ' is-on' : ''}">
+    <input type="radio" name="decision" value="${value}"${on ? ' checked' : ''}>
+    <span class="choice-mark" aria-hidden="true"></span>
+    <span class="choice-text">
+      <span class="choice-title">${esc(title)}</span>
+      <span class="choice-desc">${esc(desc)}</span>
+    </span>
+  </label>`;
+}
+
+function amendSubformHtml(p, m) {
+  const w = S.waiting;
+  const kinds = amendKindsFor(p, m);
+  if (!kinds.length) return '';
+  if (!kinds.some((k) => k.value === w.form?.kind)) w.form.kind = kinds[0].value;
+  const kind = kinds.find((k) => k.value === w.form.kind);
+  const options = kinds.map((k) =>
+    `<option value="${k.value}"${k.value === kind.value ? ' selected' : ''}>${esc(k.label)}</option>`).join('');
+  const value = kind.field === 'cap' ? w.form.cap : w.form.windowCap;
+  const raises = kind.value !== 'allow-recipient';
+  const deadCorner = p.blockedBecause?.code === 'over-per-call-cap'
+    && !kinds.some((k) => k.value === 'raise-per-call-cap')
+    ? `<p class="field-note">Your per-purchase limit already equals this month's budget, so the budget is what needs raising first. The limit becomes raisable afterwards, as its own decision.</p>` : '';
+  return `<div class="subform">
+    <div class="subform-grid">
+      <label class="field">
+        <span class="field-label">The change</span>
+        <select class="control" id="amend-kind">${options}</select>
+      </label>
+      ${kind.needsValue ? `<label class="field">
+        <span class="field-label">${esc(kind.valueLabel ?? 'New value')}</span>
+        <input class="control" id="amend-value" type="number" min="1" step="1" inputmode="numeric" value="${esc(value)}">
+      </label>` : ''}
+    </div>
+    <p class="field-note">${esc(kind.note)}</p>
+    ${deadCorner}
+    ${raises ? `<div class="warn-note">Making this change restarts this month's spending count: what has been spent goes back to zero.</div>` : ''}
+  </div>`;
+}
+
+function decisionCardHtml(p, m) {
+  const w = S.waiting;
+  return `<div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-label">owner only</div>
+        <div class="card-title">Your decision</div>
       </div>
     </div>
     <div class="card-body">
-      <p>${now} This is where you approve one purchase, change a rule, or say no. Nothing moves until you decide.</p>
-      <p class="card-note">Until it is ready, every waiting ask is listed on the <a href="#/requests">Requests</a> screen, and nothing can be spent while one waits.</p>
+      <div class="choices">
+        ${choiceHtml('once', 'Approve this purchase once', 'You make this exact payment yourself. Your assistant gains no new power.')}
+        ${choiceHtml('amend', 'Change the rules', 'Raise a limit or approve the store permanently. Future asks are answered by the new rules.')}
+        ${choiceHtml('decline', 'Say no', 'It stays refused. Nothing is paid, and your no is recorded.')}
+      </div>
+      ${w.choice === 'amend' && w.form ? amendSubformHtml(p, m) : ''}
+      ${w.error ? `<div class="modal-error form-error">${esc(w.error)}</div>` : ''}
+      <div class="decision-actions">
+        <button class="btn btn-primary" type="button" data-action="review"${w.building ? ' disabled' : ''}>${w.building ? 'Checking…' : 'Review and confirm'}</button>
+        <a class="btn btn-quiet" href="#/waiting">Back to the list</a>
+      </div>
+      <p class="card-note">Nothing moves until you confirm in the window that opens over this page. Every decision is recorded permanently.</p>
     </div>
   </div>`;
+}
+
+function settledHtml(p, sub) {
+  const w = S.waiting;
+  const c = p.request?.context ?? {};
+  const outcome = [
+    p.resolution ? resolutionWord(p.resolution) : null,
+    sub ? submissionWord(sub) : null,
+  ].filter(Boolean).join(' · ');
+  return `<div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-label">${esc(storeName(c.recipient))} · ${esc(units(c.amount))}</div>
+        <div class="card-title">${esc(statusSentence(p.status))}</div>
+      </div>
+      <span class="chip ${statusClass(p.status)}">${esc(statusWord(p.status))}</span>
+    </div>
+    <div class="card-body">
+      ${outcome ? `<p>${esc(outcome)}</p>` : ''}
+      ${sub && sub.status === 'PENDING' ? '<p class="card-note">The record is still waiting for the network to confirm it.</p>' : ''}
+      ${w.done?.proposalId === p.id ? '<p class="decision-actions"><button class="btn" type="button" data-action="receipt">Show the receipt</button></p>' : ''}
+      <p class="card-note"><a href="#/waiting">Back to the list</a></p>
+    </div>
+  </div>`;
+}
+
+function resumeHtml(p) {
+  const c = p.request?.context ?? {};
+  return `<div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-label">decided, not landed yet</div>
+        <div class="card-title">${esc(storeName(c.recipient))} · ${esc(units(c.amount))}</div>
+      </div>
+      <span class="chip ${statusClass(p.status)}">${esc(statusWord(p.status))}</span>
+    </div>
+    <div class="card-body">
+      <p>${esc(statusSentence(p.status))} The change itself has not landed on your account yet: until it does, your rules read exactly as before.</p>
+      <p class="decision-actions">
+        <button class="btn btn-primary" type="button" data-action="finish">Finish it now</button>
+        <a class="btn btn-quiet" href="#/waiting">Back to the list</a>
+      </p>
+      <p class="card-note">Finishing asks for the same confirmations as before. Your decision is not recorded a second time.</p>
+    </div>
+  </div>`;
+}
+
+function renderDecision() {
+  const w = S.waiting;
+  const p = proposalById(w.id);
+  if (!p) {
+    if (S.loadingProposals && !S.proposals) return skelHtml(1);
+    return `<div class="card"><div class="card-body">
+      <p>That request is not here.</p>
+      <p class="card-note"><a href="#/waiting">Back to the list</a></p>
+    </div></div>`;
+  }
+  const sub = finalSubmissionFor(p.id);
+  if (p.status === 'DECLINED' || sub) return settledHtml(p, sub);
+  if (EXECUTABLE.includes(p.status)) return resumeHtml(p);
+
+  const m = S.mandate?.mandate;
+  const ask = askFactsCardHtml(p);
+  if (!m || !w.form) {
+    return `${ask}<div class="card"><div class="card-body">
+      <p class="modal-busy"><span class="spinner" aria-hidden="true"></span><span>Reading your live rules, so your decision is built from them…</span></p>
+    </div></div>`;
+  }
+  return ask + decisionCardHtml(p, m);
 }
 
 function renderActivity() {
@@ -627,6 +1040,428 @@ async function onAsk(form) {
   }
 }
 
+// ------------------------------------------------------------------ the popup
+
+// The confirmation popup: the one place a decision becomes real. Its plain
+// copy lives here; every machine detail it shows is rendered by decide.js
+// (the app's only crypto surface) into the dark strips.
+
+const STAGE_STEPS = [
+  { key: 'connect', label: "Confirm it's you" },
+  { key: 'record', label: 'Record your decision' },
+  { key: 'prepare', label: 'Prepare the change' },
+  { key: 'authorize', label: 'Confirm the change' },
+  { key: 'send', label: 'Send it' },
+  { key: 'confirm', label: 'Wait for it to land' },
+];
+
+const ACTIVE_STAGES = ['connect', 'record', 'prepare', 'authorize', 'send', 'confirm'];
+
+// The machine's own step names, mapped to the steps above.
+const FLOW_MAP = { authorize: 'authorize', wire: 'send', send: 'send', record: 'confirm' };
+
+const STAGE_TEXT = {
+  connect: 'Your account app is opening. Allow the connection there.',
+  record: 'Confirm your decision in the window that just opened. It confirms exactly what you reviewed, and nothing else.',
+  prepare: 'Preparing the exact change. Nothing to do here.',
+  authorize: 'Confirm the change in the window that just opened.',
+  send: 'Sending it from your own account. Approve the send there.',
+  confirm: 'Sent. Waiting for your account to update. This can take a minute.',
+};
+
+const MODAL_TITLES = {
+  review: 'One last look',
+  connect: "Confirm it's you",
+  record: 'Record your decision',
+  prepare: 'Preparing the change',
+  authorize: 'Confirm the change',
+  send: 'Sending it',
+  confirm: 'Almost there',
+  stalled: 'Sent, not confirmed yet',
+  done: 'Done',
+  failed: 'It did not go through',
+};
+
+const DONE_TEXT = {
+  decline: 'You said no. It stays refused, and your no is recorded.',
+  once: 'Done. The payment went through, sent by you, and it is recorded permanently.',
+  amend: 'Done. Your rules changed, and the change is recorded permanently.',
+};
+
+function activeStage(md) {
+  return !!md && ACTIVE_STAGES.includes(md.stage);
+}
+
+function setStage(key, extra = {}) {
+  S.waiting.modal = { stage: key, ...extra };
+  renderModal();
+}
+
+function openModal(stage) {
+  S.waiting.modal = { stage };
+  renderModal();
+  const btn = els.modalBody.querySelector('.btn-primary');
+  if (btn) btn.focus();
+}
+
+/**
+ * Closing is refused while a step is in flight: a popup owns the moment, and
+ * walking away mid-send is exactly the ambiguity this product refuses to have.
+ * Everything is recoverable by design - a decision that got recorded but not
+ * landed shows up as "Finish these", and the server never accepts a second
+ * landing for the same one.
+ */
+function closeModal() {
+  const w = S.waiting;
+  if (w.running && activeStage(w.modal)) return;
+  w.modal = null;
+  els.modal.hidden = true;
+  els.modalBackdrop.hidden = true;
+}
+
+function finishModal() {
+  closeModal();
+  location.hash = '#/waiting';
+}
+
+function flowSteps() {
+  const w = S.waiting;
+  if ((w.choice === 'decline' || w.doneKind === 'decline') && !w.flowResumed) {
+    return STAGE_STEPS.slice(0, 2);
+  }
+  return STAGE_STEPS;
+}
+
+function stageListHtml(md) {
+  const w = S.waiting;
+  const steps = flowSteps();
+  const atKey = md.stage === 'failed' ? md.failedAt : md.stage === 'stalled' ? 'confirm' : md.stage;
+  let curIdx = steps.findIndex((s) => s.key === atKey);
+  if (md.stage === 'done') curIdx = steps.length;
+  return `<div class="stage-list">${steps.map((s, i) => {
+    let cls = '';
+    if (md.stage === 'failed' && i === curIdx) cls = ' is-bad';
+    else if (i < curIdx || (w.flowResumed && s.key === 'record')) cls = ' is-done';
+    else if (i === curIdx) cls = ' is-now';
+    return `<div class="stage${cls}"><span class="stage-dot" aria-hidden="true"></span><span>${esc(s.label)}</span></div>`;
+  }).join('')}</div>`;
+}
+
+function factRow(k, v) {
+  return `<div class="fact"><span class="fact-k">${esc(k)}</span><span class="fact-v">${esc(v)}</span></div>`;
+}
+
+function decisionSummaryText(p) {
+  const w = S.waiting;
+  const m = S.mandate?.mandate;
+  const c = p?.request?.context ?? {};
+  if (w.choice === 'once') return `Approve once: ${units(c.amount)} to ${storeName(c.recipient)}, paid by you.`;
+  if (w.choice === 'decline') return 'Say no. It stays refused.';
+  const kind = w.form?.kind;
+  if (kind === 'raise-per-call-cap') return `Raise your per-purchase limit from ${units(m?.maxPerCall)} to ${units(w.form?.cap)}.`;
+  if (kind === 'raise-window-cap') return `Raise this month's budget from ${units(m?.maxPerWindow)} to ${units(w.form?.windowCap)}.`;
+  return `Add ${storeName(w.form?.recipient)} to your approved list, permanently.`;
+}
+
+function modalActionsHtml(md) {
+  const w = S.waiting;
+  const btns = [];
+  if (md.stage === 'review') {
+    btns.push('<button class="btn btn-quiet" type="button" data-action="m-back">Back</button>');
+    btns.push('<button class="btn btn-primary" type="button" data-action="m-continue">Continue</button>');
+  } else if (md.stage === 'done') {
+    btns.push('<button class="btn" type="button" data-action="m-receipt">Show the receipt</button>');
+    btns.push('<button class="btn btn-primary" type="button" data-action="m-finish">Done</button>');
+  } else if (md.stage === 'stalled') {
+    btns.push('<button class="btn btn-primary" type="button" data-action="m-keep-looking">Keep looking</button>');
+    if (w.txHash) btns.push('<button class="btn" type="button" data-action="m-receipt">Show the receipt</button>');
+    btns.push('<button class="btn btn-quiet" type="button" data-action="m-close">Close</button>');
+  } else if (md.stage === 'failed') {
+    btns.push('<button class="btn btn-primary" type="button" data-action="m-retry">Try again</button>');
+    if (w.txHash) btns.push('<button class="btn" type="button" data-action="m-receipt">Show the receipt</button>');
+    btns.push('<button class="btn btn-quiet" type="button" data-action="m-close">Close</button>');
+  }
+  // Active stages deliberately render no actions: the popups own the moment.
+  return btns.length ? `<div class="modal-actions">${btns.join('')}</div>` : '';
+}
+
+function reviewBodyHtml(p) {
+  const w = S.waiting;
+  const c = p?.request?.context ?? {};
+  const sidePlain = sideEffectsPlain(w.preview?.sideEffects ?? []);
+  return `
+    <div class="fact-list">
+      ${factRow('The ask', `${storeName(c.recipient)} · ${units(c.amount)}`)}
+      ${factRow('Your decision', decisionSummaryText(p))}
+    </div>
+    ${sidePlain.length ? `<div class="warn-note">${sidePlain.map((s) => esc(s)).join('<br>')}</div>` : ''}
+    <div class="modal-text">The confirmation happens in your account app, in a window that opens over this page. What you confirm there is exactly what is written here, and nothing else.</div>
+    ${reviewMachineHtml(w.preview)}
+    ${w.signer && w.walletInfo ? walletMachineHtml(w.walletInfo) : walletPickerHtml(w.walletApps, w.walletId)}
+    ${modalActionsHtml({ stage: 'review' })}`;
+}
+
+function progressBodyHtml(md) {
+  const w = S.waiting;
+  const parts = [stageListHtml(md)];
+  if (ACTIVE_STAGES.includes(md.stage)) {
+    let text = STAGE_TEXT[md.stage] ?? '';
+    if (md.stage === 'confirm' && md.tries) text += ` (check ${md.tries})`;
+    parts.push(`<div class="modal-busy"><span class="spinner" aria-hidden="true"></span><span>${esc(text)}</span></div>`);
+  }
+  if (md.stage === 'stalled') {
+    parts.push('<div class="modal-text">It was sent, but your account had not confirmed it within two minutes. The record says so honestly. Keep looking, or close this: it is never sent a second time.</div>');
+  }
+  if (md.stage === 'done') {
+    parts.push(`<div class="modal-text">${esc(DONE_TEXT[w.doneKind] ?? DONE_TEXT.amend)}</div>`);
+  }
+  if (md.stage === 'failed') {
+    parts.push(`<div class="modal-error">${esc(md.error ?? 'That did not work. Nothing was changed.')}</div>`);
+  }
+  if (ACTIVE_STAGES.includes(md.stage) || md.stage === 'stalled') {
+    parts.push(stageMachineHtml(md.stage === 'stalled' ? 'confirm' : md.stage, {
+      walletInfo: w.walletInfo,
+      plan: w.plan,
+      isController: w.plan ? controllerIs(w.signer, w.plan) : undefined,
+      txHash: w.txHash,
+      tries: md.tries,
+    }));
+  }
+  if (md.stage === 'failed') parts.push(errorMachineHtml(md.machineError));
+  parts.push(modalActionsHtml(md));
+  return parts.join('');
+}
+
+function renderModal() {
+  const w = S.waiting;
+  const md = w.modal;
+  if (!md) {
+    els.modal.hidden = true;
+    els.modalBackdrop.hidden = true;
+    return;
+  }
+  els.modal.hidden = false;
+  els.modalBackdrop.hidden = false;
+  els.modalClose.hidden = activeStage(md);
+  els.modalTitle.textContent = MODAL_TITLES[md.stage] ?? 'Your decision';
+  els.modalBody.innerHTML = md.stage === 'review'
+    ? reviewBodyHtml(proposalById(w.id))
+    : progressBodyHtml(md);
+}
+
+// ------------------------------------------------------------------ the decision flow
+
+function currentChoiceResolution() {
+  const w = S.waiting;
+  const m = S.mandate?.mandate;
+  const resolution = resolutionFromChoice({ choice: w.choice, form: w.form, token: m?.token });
+  if (!previewIsCurrent(w.preview, resolution)) {
+    throw new Error('the decision changed after the preview - review it again before confirming');
+  }
+  return resolution;
+}
+
+async function onReview() {
+  const w = S.waiting;
+  if (w.running || w.building) return;
+  const p = proposalById(w.id);
+  const m = S.mandate?.mandate;
+  if (!p || p.status !== 'PENDING') return;
+  if (!m || !w.form) {
+    w.error = 'Your live rules are not fully read yet. Wait a moment, then try again.';
+    render();
+    return;
+  }
+  let resolution;
+  try {
+    resolution = resolutionFromChoice({ choice: w.choice, form: w.form, token: m.token });
+  } catch (e) {
+    w.error = plainError(e.message);
+    render();
+    return;
+  }
+  w.building = true;
+  w.error = null;
+  render();
+  try {
+    const preview = await buildPreview(w.id, resolution);
+    if (!preview.matches) {
+      throw new Error('the browser and the server computed different digests - refusing to continue');
+    }
+    w.preview = preview;
+    w.walletApps = walletChoices();
+    openModal('review');
+  } catch (e) {
+    w.preview = null;
+    w.error = plainError(e.message);
+  } finally {
+    w.building = false;
+    render();
+  }
+}
+
+async function afterDecision(kind) {
+  const w = S.waiting;
+  w.doneKind = kind;
+  w.done = {
+    proposalId: w.id,
+    kind,
+    at: Date.now(),
+    preview: w.preview,
+    confirmation: w.confirmation ?? null,
+    plan: w.plan ?? null,
+    txHash: w.txHash ?? null,
+    receipt: w.receipt ?? null,
+    record: w.record ?? null,
+  };
+  flash(DONE_TEXT[kind] ?? DONE_TEXT.amend);
+  setStage('done');
+}
+
+async function confirmLanding() {
+  const w = S.waiting;
+  const receipt = await pollReceipt(w.txHash, {
+    onTick: (i, tries) => {
+      w.receiptTries = i;
+      setStage('confirm', { tries: `${i} of ${tries}` });
+    },
+  });
+  w.receipt = receipt;
+  const outcome = receiptOutcome(receipt);
+  await loadProposals(true);
+  if (outcome === 'succeeded') {
+    await loadMandate(true);
+    await afterDecision(w.doneKind ?? 'amend');
+    return;
+  }
+  if (outcome === 'reverted') throw new Error(receiptErrorMessage(receipt));
+  throw new Error('it was sent, but your account had not confirmed it within two minutes');
+}
+
+/**
+ * The whole sequence, in the order the tested console proved on the live
+ * network: connect -> confirm the decision (popup 1) -> record it on the
+ * server -> prepare the landing -> confirm the change (popup 2) -> send it
+ * from the owner's own account (popup 3) -> adopt the record -> wait for the
+ * network's answer. A resume (decision already recorded, not yet landed)
+ * skips straight to preparing, and never records twice.
+ */
+async function runFlow() {
+  const w = S.waiting;
+  if (w.running) return;
+  const p0 = proposalById(w.id);
+  if (!p0) return;
+  w.running = true;
+  w.flowResumed = w.resolved || EXECUTABLE.includes(p0.status);
+  try {
+    if (!w.signer) {
+      setStage('connect');
+      const out = await connectOwnerWallet({ mandate: S.mandate, walletId: w.walletId });
+      w.signer = out.signer;
+      w.walletInfo = out.info;
+      setStage('connect');
+    }
+    if (!w.flowResumed) {
+      setStage('record');
+      const resolution = currentChoiceResolution();
+      const out = await signResolution({
+        mandate: S.mandate,
+        signer: w.signer,
+        preview: w.preview,
+        resolution,
+        proposalId: w.id,
+      });
+      w.resolved = true;
+      w.confirmation = out;
+      if (resolution.type === 'decline') {
+        await loadProposals(true);
+        await afterDecision('decline');
+        return;
+      }
+      w.doneKind = resolution.type === 'execute-once' ? 'once' : 'amend';
+      await loadProposals(true);
+    } else {
+      w.doneKind = p0.status === 'APPROVED_ONCE' ? 'once' : 'amend';
+    }
+    setStage('prepare');
+    const plan = await planSubmission(w.id);
+    w.plan = plan;
+    const out = await submitViaWallet({
+      signer: w.signer,
+      plan,
+      onStage: (machineStep) => setStage(FLOW_MAP[machineStep] ?? 'prepare'),
+    });
+    w.txHash = out.txHash;
+    w.record = out.record;
+    setStage('confirm');
+    await confirmLanding();
+  } catch (e) {
+    failFlow(e);
+  } finally {
+    w.running = false;
+    renderModal();
+  }
+}
+
+function failFlow(e) {
+  const w = S.waiting;
+  const message = String(e?.message ?? e);
+  const kind = failureKind(message);
+  w.modal = {
+    stage: kind === 'stalled' ? 'stalled' : 'failed',
+    failedAt: w.modal?.stage ?? null,
+    error: plainError(message),
+    machineError: message,
+  };
+  renderModal();
+}
+
+function retryFlow() {
+  const w = S.waiting;
+  if (w.running) return;
+  const p = proposalById(w.id);
+  const resume = w.resolved || (p && EXECUTABLE.includes(p.status));
+  closeModal();
+  if (resume) {
+    runFlow();
+    return;
+  }
+  // Not recorded yet: rebuild the preview from the live numbers first, so the
+  // retry always confirms a fresh, re-validated decision.
+  onReview();
+}
+
+async function keepLooking() {
+  const w = S.waiting;
+  if (w.running || !w.txHash) return;
+  w.running = true;
+  setStage('confirm');
+  try {
+    await confirmLanding();
+  } catch (e) {
+    failFlow(e);
+  } finally {
+    w.running = false;
+    renderModal();
+  }
+}
+
+// ------------------------------------------------------------------ the receipt
+
+function openReceipt() {
+  const d = S.waiting.done;
+  if (!d) return;
+  els.drawerTitle.textContent = 'The receipt';
+  els.drawerBody.innerHTML = [
+    resolutionMachineHtml(d.confirmation),
+    reviewMachineHtml(d.preview),
+    planMachineHtml(d.plan, S.waiting.walletInfo),
+    receiptMachineHtml({ txHash: d.txHash, receipt: d.receipt, record: d.record }),
+  ].join('') || '<p>Nothing was recorded for this decision.</p>';
+  els.drawer.hidden = false;
+  els.backdrop.hidden = false;
+}
+
 // ------------------------------------------------------------------ events
 
 els.screen.addEventListener('submit', (ev) => {
@@ -646,6 +1481,9 @@ els.screen.addEventListener('click', (ev) => {
     if (['requests', 'waiting', 'activity'].includes(S.route)) loadProposals(true);
     return;
   }
+  if (action === 'review') { onReview(); return; }
+  if (action === 'finish') { runFlow(); return; }
+  if (action === 'receipt') { openReceipt(); return; }
   if (action === 'quick') {
     const inp = $('ask-amount');
     if (inp) {
@@ -674,10 +1512,58 @@ els.status.addEventListener('click', (ev) => {
   if (['requests', 'waiting', 'activity'].includes(S.route)) loadProposals(true);
 });
 
+els.screen.addEventListener('change', (ev) => {
+  const t = ev.target;
+  if (t.matches('input[name="decision"]')) {
+    S.waiting.choice = t.value;
+    S.waiting.preview = null;
+    S.waiting.error = null;
+    render();
+    return;
+  }
+  if (t.id === 'amend-kind' && S.waiting.form) {
+    S.waiting.formTouched = true;
+    S.waiting.form.kind = t.value;
+    S.waiting.preview = null;
+    render();
+  }
+});
+
+els.screen.addEventListener('input', (ev) => {
+  const t = ev.target;
+  if (t.id !== 'amend-value' || !S.waiting.form) return;
+  S.waiting.formTouched = true;
+  if (S.waiting.form.kind === 'raise-per-call-cap') S.waiting.form.cap = t.value;
+  if (S.waiting.form.kind === 'raise-window-cap') S.waiting.form.windowCap = t.value;
+  // State only, no re-render: never move the field while the user is typing.
+  // The preview is now stale; onReview rebuilds it from these values.
+  S.waiting.preview = null;
+});
+
+els.modal.addEventListener('click', (ev) => {
+  const el = ev.target.closest('[data-action]');
+  if (!el) return;
+  const action = el.dataset.action;
+  if (action === 'm-back' || action === 'm-close') { closeModal(); return; }
+  if (action === 'm-continue') { runFlow(); return; }
+  if (action === 'm-retry') { retryFlow(); return; }
+  if (action === 'm-keep-looking') { keepLooking(); return; }
+  if (action === 'm-receipt') { openReceipt(); return; }
+  if (action === 'm-finish') { finishModal(); return; }
+  if (action === 'pick-app') {
+    S.waiting.walletId = el.dataset.id ?? null;
+    renderModal();
+  }
+});
+
+els.modalClose.addEventListener('click', closeModal);
+els.modalBackdrop.addEventListener('click', closeModal);
 els.drawerClose.addEventListener('click', closeDrawer);
 els.backdrop.addEventListener('click', closeDrawer);
 window.addEventListener('keydown', (ev) => {
-  if (ev.key === 'Escape') closeDrawer();
+  if (ev.key !== 'Escape') return;
+  if (!els.drawer.hidden) { closeDrawer(); return; }
+  closeModal();
 });
 
 window.addEventListener('hashchange', navigate);

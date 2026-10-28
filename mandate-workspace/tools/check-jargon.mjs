@@ -8,8 +8,10 @@
 // speak.
 //
 // Rules checked, all mechanically:
-//   1. UI files (index.html, app.js, vocab.js, stores.js, style.css,
-//      tokens.css): banned crypto words only inside crypto-surface blocks.
+//   1. UI files (index.html, app.js, vocab.js, stores.js, decide.js,
+//      style.css, tokens.css): banned crypto words only inside crypto-surface
+//      blocks. decide.js and stores.js are fenced whole-file: they are the
+//      machine layer the screens call, never plain-language copy.
 //   2. Machine files (data.js, serve.mjs): exempt from the word scan, but
 //      forbidden from rendering anything (no HTML, no DOM access).
 //   3. app.js: every error that reaches display state must pass through
@@ -30,7 +32,7 @@ import { fileURLToPath } from 'node:url';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(resolve(HERE, '..'), 'app');
 
-const UI_FILES = ['index.html', 'app.js', 'vocab.js', 'stores.js', 'style.css', 'tokens.css'];
+const UI_FILES = ['index.html', 'app.js', 'vocab.js', 'stores.js', 'decide.js', 'style.css', 'tokens.css'];
 const MACHINE_FILES = ['data.js', 'serve.mjs'];
 
 const fail = [];
