@@ -82,3 +82,22 @@ with the one differentiator incumbents can't claim: user sovereignty enforced on
 
 Runner-up (parked, not rejected forever): AI trading agent — crowded lane, needs finance
 literacy; can be added later as scenario #2 on the same primitives.
+
+## Scenario definition — the working app (2026-10-28)
+
+One sentence: you hire an AI assistant to handle the buying for your small business;
+the app is where you give it an allowance, keep it inside the rules, and watch every
+receipt land. Cast: You (owner) / Your AI assistant / The stores (3 approved vendors) /
+The app. Story: set limits (150 per purchase, 600 a month, 3 stores) -> assistant buys
+freely inside them -> an over-limit ask STOPS (nothing charged) -> you approve once,
+refuse, or raise the limit (one confirmation, wallet = 'Face ID for money') -> every
+purchase and decision is written down forever. Analogy: a teenager's debit card with
+parental controls nobody can bypass — the money itself enforces them; users feel that,
+never see it.
+
+UI ruling: NO crypto-native surface. No addresses/keys/hashes/gas/chain names anywhere
+on the surface. Crypto appears exactly twice: the approval confirmation popup, and
+optional 'show the receipt' drawers. Build target: the existing tested console (378
+tests, live testnet) reskinned into this scenario - screens: Rules / Requests / Waiting
+for you / Activity / How it works. Hero-slice + premium-site work PARKED (user ruling
+2026-10-28: 'not going on with the demo').

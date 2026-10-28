@@ -49,3 +49,8 @@ Console, server, contract, 330+48 tests. The site is a new floor in the same bui
 
 ## User's total workload
 React to the hero (more/less/yes). One click to enable Pages at publish time. Nothing else.
+
+## STATUS: PARKED (2026-10-28)
+User ruling: 'im not going on with the demo again'. Priority is the working app
+(scenario reskin of the tested console) - see product-shape.md 'Scenario definition'.
+Hero slice (mockups/site-hero-demo.html) stays in the repo as a calibration artifact.
