@@ -4,6 +4,9 @@ gate-account/.sepolia/
 # contains the demo witness private key
 permission-core/.data/demo-agent-runtime.json
 
+# --- local reference snapshot: another project's code, never committed ---
+mandate-workspace/anchorgate-reference/
+
 # --- build artifacts & dependencies ---
 node_modules/
 gate-account/target/
