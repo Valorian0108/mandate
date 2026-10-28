@@ -4,6 +4,16 @@ An AI assistant that spends money — on an allowance you control.
 Written in plain language for outside review. No prior knowledge needed.
 ====================================================================
 
+FROM THE BUILDER (why you're reading this)
+I built the working system this document describes — solo. The on-chain
+enforcement contract, the permission engine, and the console app exist
+and run today: 378 passing automated tests and live, publicly
+verifiable proofs on Starknet's testnet (details in section 5). So this
+is NOT an idea asking "can it be built?" — it is a working prototype
+asking a different question: "is the scenario below the RIGHT use case
+to build the product around?" That's the feedback I want from you.
+Ignore feasibility; judge the problem, the users, and the wedge.
+
 1) THE ONE-LINER
 You hire an AI assistant to handle buying for your small business.
 This app is where you give it an allowance, where anything over that
