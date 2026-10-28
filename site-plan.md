@@ -8,6 +8,14 @@ Hallmark; its design flow is not used (user ruling in ui-tools-verdict.md).
 Stack: vanilla HTML/CSS/JS + GSAP (motion engine) + emilkowalski/skills (motion taste) +
 DESIGN.md via google-labs-code/design.md (brand lock, lint-checked).
 
+## Style name (settled 2026-10-28)
+Modern Minimalism — "instrument panel" variant (Stripe/Linear/Vercel school; technical/Swiss-influenced
+minimalism; premium end = quiet luxury). Signature: cool-white ground, ONE signal color <5%, hairlines
+not shadows, mono reserved for the machine layer, motion as feedback only. Banned: glassmorphism,
+neobrutalism, atmospheric glow, maximalism. Techniques used (not identity): bento stats strip,
+scrollytelling (GSAP) on the site. One-liner: "a quiet instrument panel you'd trust with your
+money — that wakes up and responds when you touch it." DESIGN.md must encode this.
+
 ## Phase 0 — Setup (no site yet)
 - `site/` folder in the mandate repo.
 - GSAP installed (free, the only real dependency).
