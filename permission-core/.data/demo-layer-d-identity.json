@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "agentId": "0x00a852fe0f464f04954d7b1e49c544994d7eca7df5318c34d0faa7edf109b551",
+  "owner": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0",
+  "purpose": "Layer D demo: book travel within the owner mandate",
+  "nonce": "0x9a092abd3a400873",
+  "createdAt": 1793016248038,
+  "signature": {
+    "r": "0x6e7000dbf4cf3e45433d19112858a3932acdbd2a0812663a99265a58059a7c8",
+    "s": "0x4f76adb6ad95da1b1d814ed291efa375f92d302155382904a9131f19f5a5ea"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gate-agent-tx",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Stage 2 tooling: builds and submits agent session transactions (4-element signature) to Starknet Sepolia. Also the authoritative source for selector constants used in GateAccount whitelists.",
+  "scripts": {
+    "selectors": "node selectors.mjs",
+    "agent-tx": "node agent-tx.mjs"
+  },
+  "dependencies": {
+    "@scure/starknet": "^2.4.0",
+    "starknet": "^10.8.0"
+  }
+}

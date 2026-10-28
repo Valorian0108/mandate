@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-24T20:49:11.673Z",
+  "network": "starknet-sepolia",
+  "proposal_id": "fe0098ada34c9af3",
+  "resolution_digest": "0x038c8f03cdf7a6addb24dfddb47de6a7e18d912fca94bb17dcd07285858fc610",
+  "amendment": {
+    "kind": "raise-per-call-cap",
+    "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+    "maxPerCall": "20"
+  },
+  "owner_tx_hash": "0x728c64fe3c400cfd3ced936072b0ec5004843589fe14301cbceda84c2213d5b",
+  "agent_tx_hash": "0x414f0ddd6ce6ae3b931b06fda44998ba0948633352d4d34929f44109c7e43d9",
+  "amount_sent": "15",
+  "merchant": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+  "policy_before": {
+    "maxPerCall": "10",
+    "maxPerWindow": "100",
+    "spentInWindow": "5",
+    "callsUsed": 1
+  },
+  "policy_after": {
+    "maxPerCall": "20",
+    "maxPerWindow": "100",
+    "spentInWindow": "15",
+    "callsUsed": 2
+  },
+  "side_effects_logged": [
+    "per-call cap: 10 -> 20",
+    "WARNING (v0.2 contract): re-setting the policy RESTARTS the spending window - spent_in_window resets to 0 (was 5). The monthly counter starts over."
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "submissions": [
+    {
+      "proposalId": "327cec7784892c98",
+      "submittedAt": 1792900713053,
+      "status": "SUCCEEDED",
+      "tx_hash": "0x1492ec9c50a52ef8728941477c9b594a111d01043711a78ba6f046ee957b682",
+      "revert_reason": null,
+      "message": null,
+      "digest": "0x010132ec7cd106ddddb801dc93dbf34eacc480d949a0d35788cd260c764d91ba",
+      "calls": [
+        {
+          "to": "0x2502f82a773faa4bc2cec186dc2fca432fa36c22138f977ac5307ce74673d25",
+          "entrypoint": "set_spending_policy",
+          "calldata": [
+            "0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+            "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+            "0x19",
+            "0x0",
+            "0x64",
+            "0x0",
+            "0x278d00"
+          ]
+        }
+      ],
+      "sideEffects": [
+        "per-call cap: 20 -> 25",
+        "WARNING (v0.2 contract): re-setting the policy RESTARTS the spending window - spent_in_window resets to 0 (was 15). The monthly counter starts over."
+      ],
+      "log": "owner tx plan: 1 call(s) from 0x2502f82a773faa4bc2cec186dc2fca432fa36c22138f977ac5307ce74673d25\n  -> 0x2502f82a773faa4bc2cec186dc2fca432fa36c22138f977ac5307ce74673d25 :: set_spending_policy [0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185, 0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd, 0x19, 0x0, 0x64, 0x0, 0x278d00]\nnonce = 0xb\npadded resource bounds = {\"l2_gas\":{\"max_amount\":\"0x61f9fe\",\"max_price_per_unit\":\"0x695d6ebc5\"},\"l1_gas\":{\"max_amount\":\"0x0\",\"max_price_per_unit\":\"0x4505379aedc9\"},\"l1_data_gas\":{\"max_amount\":\"0x3c0\",\"max_price_per_unit\":\"0x12870\"}}\nsuggested max fee = (n/a)\nsubmitted, tx hash = 0x1492ec9c50a52ef8728941477c9b594a111d01043711a78ba6f046ee957b682\nfinal status = ACCEPTED_ON_L2 | execution = SUCCEEDED\nOWNER_TX_RESULT {\"status\":\"SUCCEEDED\",\"tx_hash\":\"0x1492ec9c50a52ef8728941477c9b594a111d01043711a78ba6f046ee957b682\",\"finality\":\"ACCEPTED_ON_L2\"}\n"
+    },
+    {
+      "proposalId": "7c4e86b5b602d1f8",
+      "submittedAt": 1792935229710,
+      "status": "SUCCEEDED",
+      "via": "relay",
+      "tx_hash": "0x7bdea2e5b1d28830d6b4b5d9eddcafba0557be88566a8bf67f94be2f75b0887",
+      "computedHash": "0x7bdea2e5b1d28830d6b4b5d9eddcafba0557be88566a8bf67f94be2f75b0887",
+      "revert_reason": null,
+      "message": null,
+      "log": null
+    },
+    {
+      "proposalId": "aae8693c90a3adee",
+      "submittedAt": 1793010182439,
+      "status": "SUCCEEDED",
+      "kind": "outside",
+      "via": "outside-relay",
+      "tx_hash": "0x3b8bb0758dc96b66f69bd417fe797d19e6e2d10fb7bc7f066240a160b9d16ea",
+      "relayer": "0x290179d7dcf12b5f733a3680a42bf9e367437ac5486ac480ecd5d5b5fb8546",
+      "scheme": "wallet-snip12-src9",
+      "signerAddress": "0x5c7b89fe362cf8dcc40176979b382799633930f0705b217434218de7b9af5ec",
+      "controller": "0x5c7b89fe362cf8dcc40176979b382799633930f0705b217434218de7b9af5ec",
+      "nonce": "0x9a04440ed60be19884809e7ae3f63be9",
+      "digest": "0x491e6418f2847c222e3b04b2cf50c5eb3ec2ff6158abd2e12758a4fa067d603",
+      "revert_reason": null,
+      "message": null,
+      "log": null,
+      "nonce_consumed": true
+    },
+    {
+      "proposalId": "29dec48f87b015de",
+      "submittedAt": 1793093276866,
+      "status": "SUCCEEDED",
+      "via": "relay",
+      "tx_hash": "0x62c0bd18ca50c4fae3a1341d0fa39b8dd4315228b4d09c4a2fdf51acfa1b62b",
+      "computedHash": "0x62c0bd18ca50c4fae3a1341d0fa39b8dd4315228b4d09c4a2fdf51acfa1b62b",
+      "revert_reason": null,
+      "message": null,
+      "log": null
+    },
+    {
+      "proposalId": null,
+      "action": "upgrade",
+      "submittedAt": 1793099977689,
+      "status": "SUCCEEDED",
+      "via": "relay",
+      "tx_hash": "0x55ea5c1f12bcf9130ec1501031a413a12e116ead7491204b0ae33fa6a7566a0",
+      "computedHash": "0x55ea5c1f12bcf9130ec1501031a413a12e116ead7491204b0ae33fa6a7566a0",
+      "revert_reason": null,
+      "message": null,
+      "log": null
+    },
+    {
+      "proposalId": "4883847fbc212efe",
+      "submittedAt": 1793160313886,
+      "status": "SUCCEEDED",
+      "kind": "outside",
+      "via": "wallet-submitted",
+      "tx_hash": "0x419f306ab0e164fa420b584c0528390d824a271c744e1c59c92fdce5236ebb7",
+      "sender": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb",
+      "relayer": null,
+      "scheme": "wallet-snip12-src9",
+      "signerAddress": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb",
+      "controller": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb",
+      "nonce": "0x313bab0c14d1209f9999945a68959508",
+      "digest": null,
+      "revert_reason": null,
+      "message": null,
+      "log": null,
+      "nonce_consumed": true
+    },
+    {
+      "proposalId": "97dca512ed101c00",
+      "submittedAt": 1793169294374,
+      "status": "SUCCEEDED",
+      "kind": "outside",
+      "via": "wallet-submitted",
+      "tx_hash": "0x69b20e5cd9878a416448f99002c491aa2888c8bb757ef19c73e44c510a7fa0d",
+      "sender": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb",
+      "relayer": null,
+      "scheme": "wallet-snip12-src9",
+      "signerAddress": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb",
+      "controller": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb",
+      "nonce": "0x9bab0c74b6101a0db63ff84aee1b6b7d",
+      "digest": null,
+      "revert_reason": null,
+      "message": null,
+      "log": null,
+      "nonce_consumed": true
+    },
+    {
+      "proposalId": "a05edb2be7322ed1",
+      "submittedAt": 1793176278867,
+      "status": "SUCCEEDED",
+      "kind": "outside",
+      "via": "wallet-submitted",
+      "tx_hash": "0x205710f6a197c017bc096c19538c0ff8114203fb1c80396e4e891c335e251fb",
+      "sender": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb",
+      "relayer": null,
+      "scheme": "wallet-snip12-src9",
+      "signerAddress": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb",
+      "controller": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb",
+      "nonce": "0xdac915c2496e5b97987f2caebe15b957",
+      "digest": null,
+      "revert_reason": null,
+      "message": null,
+      "log": null,
+      "nonce_consumed": true
+    }
+  ]
+}

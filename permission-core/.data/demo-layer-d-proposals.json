@@ -1,0 +1,56 @@
+{
+  "proposals": [
+    {
+      "id": "48fdef7f88af7601",
+      "createdAt": 1792915514759,
+      "request": {
+        "user": "user:demo",
+        "agent": "agent:demo",
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 5,
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd"
+        }
+      },
+      "blockedBecause": {
+        "verdict": "ASK_USER",
+        "code": "cold-start",
+        "reason": "this agent has no track record yet - every action needs the owner's approval until it earns a first step",
+        "gate": "trust"
+      },
+      "contextNote": "",
+      "status": "PENDING",
+      "resolution": null,
+      "signature": null,
+      "resolvedAt": null
+    },
+    {
+      "id": "18ad3285dbd20c0b",
+      "createdAt": 1793016249004,
+      "request": {
+        "user": "user:demo",
+        "agent": "agent:demo",
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 5,
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148"
+        }
+      },
+      "blockedBecause": {
+        "verdict": "ASK_USER",
+        "code": "cold-start",
+        "reason": "this agent has no track record yet - every action needs the owner's approval until it earns a first step",
+        "gate": "trust"
+      },
+      "contextNote": "",
+      "status": "PENDING",
+      "resolution": null,
+      "signature": null,
+      "resolvedAt": null
+    }
+  ]
+}

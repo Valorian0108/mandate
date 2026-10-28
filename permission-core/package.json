@@ -1,0 +1,21 @@
+{
+  "name": "permission-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Layer C: the permission engine. One standard question ('may this agent do this action to this resource?'), pluggable gates, ALLOW/DENY/ASK_USER with plain-word reasons. Gate #1 is the spending gate whose rules are enforced on-chain by GateAccount (Layer E).",
+  "scripts": {
+    "test": "node --test"
+  },
+  "exports": {
+    ".": "./src/sdk.mjs"
+  },
+  "dependencies": {
+    "@noble/curves": "2.4.0",
+    "@noble/hashes": "2.4.0",
+    "@scure/starknet": "^2.4.0"
+  },
+  "devDependencies": {
+    "starknet": "10.8.0"
+  }
+}

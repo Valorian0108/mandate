@@ -1,0 +1,15 @@
+# --- secrets: never commit, never remove from disk ---
+# contains owner/session/deployer private keys (Sepolia) — evidence stays on disk only
+gate-account/.sepolia/
+# contains the demo witness private key
+permission-core/.data/demo-agent-runtime.json
+
+# --- build artifacts & dependencies ---
+node_modules/
+gate-account/target/
+coverage/
+dist/
+
+# --- OS noise ---
+Thumbs.db
+.DS_Store

@@ -1,0 +1,248 @@
+{
+  "version": 1,
+  "records": [
+    {
+      "version": 1,
+      "agentId": "0x01bd3b9f890b7a660ae0158b4e29d548eb0c5c014ef7beaaaddf3088a41941be",
+      "seq": 1,
+      "at": 1792915514761,
+      "domain": "spend",
+      "action": "spend:transfer",
+      "outcome": "asked",
+      "facts": {
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 5,
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd"
+        },
+        "code": "cold-start",
+        "reason": "this agent has no track record yet - every action needs the owner's approval until it earns a first step",
+        "proposalId": "48fdef7f88af7601",
+        "receipt": null
+      },
+      "witness": "0x1855f8e48996429380080edcce9972b2504ce336e062fddc940b0f7acd075c6",
+      "signature": {
+        "r": "0x36f91b71c7ca40fe41a7e2100bb39eea63f5949f9d5ca2c0be2c512c65894e7",
+        "s": "0x10736cd6aa7613d392cdce4450b950777fd549ef0cab478603fd81f3588fba8"
+      }
+    },
+    {
+      "version": 1,
+      "agentId": "0x01bd3b9f890b7a660ae0158b4e29d548eb0c5c014ef7beaaaddf3088a41941be",
+      "seq": 2,
+      "at": 1792915515133,
+      "domain": "spend",
+      "action": "spend:transfer",
+      "outcome": "sandbox-allowed",
+      "facts": {
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 5,
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd"
+        },
+        "code": "within-mandate",
+        "reason": "transfer of 5 to a listed merchant is inside every limit (per-call 25, window 100, spent so far 0)",
+        "proposalId": null,
+        "receipt": null
+      },
+      "witness": "0x1855f8e48996429380080edcce9972b2504ce336e062fddc940b0f7acd075c6",
+      "signature": {
+        "r": "0x54db41a7d2ee2085c9fc20a8945f822decc28498eb8c90f8a291973ad3087b5",
+        "s": "0x35fb78af3eb7219731f66b1f814a98c84e5851f7eacc570194645be4700743b"
+      }
+    },
+    {
+      "version": 1,
+      "agentId": "0x01bd3b9f890b7a660ae0158b4e29d548eb0c5c014ef7beaaaddf3088a41941be",
+      "seq": 3,
+      "at": 1792915515477,
+      "domain": "spend",
+      "action": "spend:transfer",
+      "outcome": "sandbox-allowed",
+      "facts": {
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 5,
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd"
+        },
+        "code": "within-mandate",
+        "reason": "transfer of 5 to a listed merchant is inside every limit (per-call 25, window 100, spent so far 0)",
+        "proposalId": null,
+        "receipt": null
+      },
+      "witness": "0x1855f8e48996429380080edcce9972b2504ce336e062fddc940b0f7acd075c6",
+      "signature": {
+        "r": "0x32c28c5ab729d5359cb47099bf3eaf19be335712a0d1ee0028f738d3ff2be85",
+        "s": "0x494308f56b4a0af37f3f3a35eea19c7a6c16be201939ee4124bc1807abc9e4a"
+      }
+    },
+    {
+      "version": 1,
+      "agentId": "0x01bd3b9f890b7a660ae0158b4e29d548eb0c5c014ef7beaaaddf3088a41941be",
+      "seq": 4,
+      "at": 1792915515909,
+      "domain": "spend",
+      "action": "spend:transfer",
+      "outcome": "sandbox-allowed",
+      "facts": {
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 5,
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd"
+        },
+        "code": "within-mandate",
+        "reason": "transfer of 5 to a listed merchant is inside every limit (per-call 25, window 100, spent so far 0)",
+        "proposalId": null,
+        "receipt": null
+      },
+      "witness": "0x1855f8e48996429380080edcce9972b2504ce336e062fddc940b0f7acd075c6",
+      "signature": {
+        "r": "0x1a7da03ccb070c829675d73f2230bedac558046b3e84c11be252d460125396e",
+        "s": "0x546c450e7a069507dbfc904cbbd2f627aaa2c5fcc181e89b0936af60c68e1ad"
+      }
+    },
+    {
+      "version": 1,
+      "agentId": "0x00a852fe0f464f04954d7b1e49c544994d7eca7df5318c34d0faa7edf109b551",
+      "seq": 1,
+      "at": 1793016249006,
+      "domain": "spend",
+      "action": "spend:transfer",
+      "outcome": "asked",
+      "facts": {
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 5,
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148"
+        },
+        "code": "cold-start",
+        "reason": "this agent has no track record yet - every action needs the owner's approval until it earns a first step",
+        "proposalId": "18ad3285dbd20c0b",
+        "receipt": null
+      },
+      "witness": "0x75d6344c55dd22c9f61c1cc0190ef1dd02b7dbb2cb9d65c4594bab19f741047",
+      "signature": {
+        "r": "0x75f4ffac4d6907df649f9ee0fcc44d80177328e8abd8f212ebfefe0ba528ed5",
+        "s": "0x7588032622b8ab022da3029c6f256f551c54f9afee3a0cc1d152ec09e62882b"
+      }
+    },
+    {
+      "version": 1,
+      "agentId": "0x00a852fe0f464f04954d7b1e49c544994d7eca7df5318c34d0faa7edf109b551",
+      "seq": 2,
+      "at": 1793016249378,
+      "domain": "spend",
+      "action": "spend:transfer",
+      "outcome": "sandbox-allowed",
+      "facts": {
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 5,
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148"
+        },
+        "code": "within-mandate",
+        "reason": "transfer of 5 to a listed merchant is inside every limit (per-call 30, window 100, spent so far 0)",
+        "proposalId": null,
+        "receipt": null
+      },
+      "witness": "0x75d6344c55dd22c9f61c1cc0190ef1dd02b7dbb2cb9d65c4594bab19f741047",
+      "signature": {
+        "r": "0x63dd9fb63d84d4a2f49493a82cd6fbd9e64b7f3d4e506c78a172ae651d7d7d0",
+        "s": "0x7033eadc82e5d70f117e32c0c49b8f0078ecb9763843c35a1aba0f864621efe"
+      }
+    },
+    {
+      "version": 1,
+      "agentId": "0x00a852fe0f464f04954d7b1e49c544994d7eca7df5318c34d0faa7edf109b551",
+      "seq": 3,
+      "at": 1793016249759,
+      "domain": "spend",
+      "action": "spend:transfer",
+      "outcome": "sandbox-allowed",
+      "facts": {
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 5,
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148"
+        },
+        "code": "within-mandate",
+        "reason": "transfer of 5 to a listed merchant is inside every limit (per-call 30, window 100, spent so far 0)",
+        "proposalId": null,
+        "receipt": null
+      },
+      "witness": "0x75d6344c55dd22c9f61c1cc0190ef1dd02b7dbb2cb9d65c4594bab19f741047",
+      "signature": {
+        "r": "0x81a7c9ef252b72804cc4551b4acd8eb409675de54775af1d93ace07783100e",
+        "s": "0x4d78b377422e54c70a9b0108fc7dca1ec2865ee32af9c99d985f1d542e2943"
+      }
+    },
+    {
+      "version": 1,
+      "agentId": "0x00a852fe0f464f04954d7b1e49c544994d7eca7df5318c34d0faa7edf109b551",
+      "seq": 4,
+      "at": 1793016250136,
+      "domain": "spend",
+      "action": "spend:transfer",
+      "outcome": "sandbox-allowed",
+      "facts": {
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 5,
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148"
+        },
+        "code": "within-mandate",
+        "reason": "transfer of 5 to a listed merchant is inside every limit (per-call 30, window 100, spent so far 0)",
+        "proposalId": null,
+        "receipt": null
+      },
+      "witness": "0x75d6344c55dd22c9f61c1cc0190ef1dd02b7dbb2cb9d65c4594bab19f741047",
+      "signature": {
+        "r": "0x4bb9d1b524d34a5364080ac6d2b607be1501692a3ae50118e57712f898019e5",
+        "s": "0x45fe2dde2080bc8e88a47ee6c7de643ece77a4177a54f920cdfa41215331313"
+      }
+    },
+    {
+      "version": 1,
+      "agentId": "0x00a852fe0f464f04954d7b1e49c544994d7eca7df5318c34d0faa7edf109b551",
+      "seq": 5,
+      "at": 1793016286281,
+      "domain": "spend",
+      "action": "spend:transfer",
+      "outcome": "sandbox-allowed",
+      "facts": {
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "5",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148"
+        },
+        "code": "within-mandate",
+        "reason": "transfer of 5 to a listed merchant is inside every limit (per-call 30, window 100, spent so far 0)",
+        "proposalId": null,
+        "receipt": null
+      },
+      "witness": "0x75d6344c55dd22c9f61c1cc0190ef1dd02b7dbb2cb9d65c4594bab19f741047",
+      "signature": {
+        "r": "0x300da16e717da664c12696861a10f3da2a659c94761183c71cbd1857fcc81e6",
+        "s": "0x6116b8103d6ff43a259b44674aaf4aa84237e4c242db673dd4a1b1ebe55ac81"
+      }
+    }
+  ]
+}

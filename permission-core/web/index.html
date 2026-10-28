@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mandate · Permission console</title>
+  <meta name="description" content="The five-screen console for a user-sovereign agent mandate on Starknet Sepolia.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230e66c8'/%3E%3Crect x='9' y='9' width='14' height='14' rx='2' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <script type="importmap" nonce="__CSP_NONCE__">
+    {
+      "imports": {
+        "@scure/starknet": "/vendor/scure/starknet/index.js",
+        "@noble/curves/": "/vendor/noble/curves/",
+        "@noble/hashes/": "/vendor/noble/hashes/"
+      }
+    }
+  </script>
+  <script type="module" src="/app.js" nonce="__CSP_NONCE__"></script>
+</head>
+<body>
+  <button class="skip" type="button" id="skip-link">Skip to content</button>
+  <div class="shell">
+    <aside class="rail">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <p class="brand-name">Mandate</p>
+          <p class="brand-sub">Permission console</p>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Screens">
+        <a href="#/mandate" data-nav="mandate">
+          <span class="nav-no">01</span><span>Mandate</span>
+        </a>
+        <a href="#/proposals" data-nav="proposals">
+          <span class="nav-no">02</span><span>Proposals</span>
+        </a>
+        <a href="#/approvals" data-nav="approvals">
+          <span class="nav-no">03</span><span>Approvals</span>
+          <span class="nav-count" data-count="approvals" hidden></span>
+        </a>
+        <a href="#/audit" data-nav="audit">
+          <span class="nav-no">04</span><span>Audit</span>
+        </a>
+        <a href="#/resume" data-nav="resume">
+          <span class="nav-no">05</span><span>Résumé</span>
+        </a>
+      </nav>
+
+      <div class="rail-chain">
+        <p class="label">Chain</p>
+        <p class="chain-name">Starknet Sepolia</p>
+        <p class="mono rail-block" id="rail-block">block —</p>
+        <button class="btn btn--quiet btn--sm" id="refresh" type="button">Read again</button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <main id="view" tabindex="-1">
+        <div class="boot">
+          <p class="label">Reading the chain</p>
+          <h1>Opening the console…</h1>
+        </div>
+      </main>
+      <footer class="statusbar" aria-label="Chain status">
+        <span id="status-chain">SEPOLIA</span>
+        <span id="status-block">block —</span>
+        <span id="status-gate">gate —</span>
+        <span id="status-read">not read yet</span>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

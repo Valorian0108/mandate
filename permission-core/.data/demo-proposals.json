@@ -1,0 +1,1051 @@
+{
+  "proposals": [
+    {
+      "id": "853cf753f6dd2840",
+      "createdAt": 1792874508112,
+      "request": {
+        "user": "user:demo-owner",
+        "agent": "agent:demo",
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "15",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "now": 1792874508
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "live cap-raise demo: agent retry follows the on-chain amendment",
+      "status": "AMENDED",
+      "resolution": {
+        "type": "amend",
+        "amendment": {
+          "kind": "raise-per-call-cap",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "maxPerCall": "20"
+        }
+      },
+      "signature": {
+        "r": "0x8203ec61370129e39561cf870c63cedb1af69d12166a66e1b72fa0e877f707",
+        "s": "0x664f486fcb243a57c933141b62aca17ad2486ff8bc35eef31e2d597effd52b7"
+      },
+      "resolvedAt": 1792874508623,
+      "ownerPublicKeyAtResolution": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0"
+    },
+    {
+      "id": "fe0098ada34c9af3",
+      "createdAt": 1792874921250,
+      "request": {
+        "user": "user:demo-owner",
+        "agent": "agent:demo",
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "15",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "now": 1792874921
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "live cap-raise demo: agent retry follows the on-chain amendment",
+      "status": "AMENDED",
+      "resolution": {
+        "type": "amend",
+        "amendment": {
+          "kind": "raise-per-call-cap",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "maxPerCall": "20"
+        }
+      },
+      "signature": {
+        "r": "0x2adf5840cb82b5d0f05375da9abfae2a475ccc44a6c4ca93751032be595ffb",
+        "s": "0x5faa55c7025550433af7db985e6f9844dc8534dfa3af5dcbf08f31fecf08619"
+      },
+      "resolvedAt": 1792874921832,
+      "ownerPublicKeyAtResolution": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0"
+    },
+    {
+      "id": "327cec7784892c98",
+      "createdAt": 1792898786168,
+      "request": {
+        "user": "user:0x2502f82a773faa4bc2cec186dc2fca432fa36c22138f977ac5307ce74673d25",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "25",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "now": 1792898786
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "AMENDED",
+      "resolution": {
+        "type": "amend",
+        "amendment": {
+          "kind": "raise-per-call-cap",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "maxPerCall": "25"
+        }
+      },
+      "signature": {
+        "r": "0x6eef21a8fa41b414486f6c13db1862dda544bd4ed46b6ea17d9b6159d6d317a",
+        "s": "0x5066e884e2f044a67000c95669f00df8e7de6225c2b8064402facaf6c549b73"
+      },
+      "resolvedAt": 1792900684287,
+      "ownerPublicKeyAtResolution": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0"
+    },
+    {
+      "id": "29dec48f87b015de",
+      "createdAt": 1792913045499,
+      "request": {
+        "user": "user:toy-app",
+        "agent": "agent:toy-app",
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": 100000,
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd"
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "",
+      "status": "AMENDED",
+      "resolution": {
+        "type": "amend",
+        "amendment": {
+          "kind": "raise-per-call-cap",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "maxPerCall": "100"
+        }
+      },
+      "signature": {
+        "scheme": "wallet-snip12-v1",
+        "r": "0x417a0c705a5d2700ca0f3c7f329fef7c1a55a3f22bb3622904722782735e466",
+        "s": "0x530d6614de504a4ef6ab7632c347f028b74e8c0a7651e0861fcf81aad4dbec0",
+        "signature": [
+          "0x1",
+          "0x0",
+          "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2",
+          "0x417a0c705a5d2700ca0f3c7f329fef7c1a55a3f22bb3622904722782735e466",
+          "0x530d6614de504a4ef6ab7632c347f028b74e8c0a7651e0861fcf81aad4dbec0"
+        ],
+        "signatureFormat": "standard",
+        "typedData": {
+          "types": {
+            "StarknetDomain": [
+              {
+                "name": "name",
+                "type": "shortstring"
+              },
+              {
+                "name": "version",
+                "type": "shortstring"
+              },
+              {
+                "name": "chainId",
+                "type": "shortstring"
+              },
+              {
+                "name": "revision",
+                "type": "shortstring"
+              }
+            ],
+            "MandateAction": [
+              {
+                "name": "kind",
+                "type": "shortstring"
+              },
+              {
+                "name": "digest",
+                "type": "felt"
+              },
+              {
+                "name": "note",
+                "type": "string"
+              }
+            ]
+          },
+          "primaryType": "MandateAction",
+          "domain": {
+            "name": "Demi Mandate",
+            "version": "1",
+            "chainId": "SN_SEPOLIA",
+            "revision": "1"
+          },
+          "message": {
+            "kind": "resolution",
+            "digest": "0x24c16c59cae5a231e6aa84acb3e2d2cda491805350350d8d75faf2d730c8585",
+            "note": "Amend the mandate: raise the per-call cap to 100."
+          }
+        },
+        "signerAddress": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb"
+      },
+      "resolvedAt": 1793047136153,
+      "ownerPublicKeyAtResolution": "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2"
+    },
+    {
+      "id": "08fb9bafe43551ae",
+      "createdAt": 1792913045508,
+      "request": {
+        "user": "user:toy-app",
+        "agent": "agent:toy-app",
+        "action": "files:share",
+        "resource": "file:quarterly-report.pdf",
+        "context": {}
+      },
+      "blockedBecause": {
+        "verdict": "ASK_USER",
+        "code": "approval-required",
+        "reason": "sharing files always needs the user to approve this specific share",
+        "gate": "files"
+      },
+      "contextNote": "",
+      "status": "DECLINED",
+      "resolution": {
+        "type": "decline"
+      },
+      "signature": {
+        "scheme": "wallet-snip12-v1",
+        "r": "0x3a8f64fdf8f38c6f3b39d3fd24fa5198fd272739c457eda8d81364cb1d5878",
+        "s": "0x56b17a96eced2bba35fc5ccac4dcd161cd4e9b64289e98face3891c6171b483",
+        "signature": [
+          "0x1",
+          "0x0",
+          "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2",
+          "0x3a8f64fdf8f38c6f3b39d3fd24fa5198fd272739c457eda8d81364cb1d5878",
+          "0x56b17a96eced2bba35fc5ccac4dcd161cd4e9b64289e98face3891c6171b483"
+        ],
+        "signatureFormat": "standard",
+        "typedData": {
+          "types": {
+            "StarknetDomain": [
+              {
+                "name": "name",
+                "type": "shortstring"
+              },
+              {
+                "name": "version",
+                "type": "shortstring"
+              },
+              {
+                "name": "chainId",
+                "type": "shortstring"
+              },
+              {
+                "name": "revision",
+                "type": "shortstring"
+              }
+            ],
+            "MandateAction": [
+              {
+                "name": "kind",
+                "type": "shortstring"
+              },
+              {
+                "name": "digest",
+                "type": "felt"
+              },
+              {
+                "name": "note",
+                "type": "string"
+              }
+            ]
+          },
+          "primaryType": "MandateAction",
+          "domain": {
+            "name": "Demi Mandate",
+            "version": "1",
+            "chainId": "SN_SEPOLIA",
+            "revision": "1"
+          },
+          "message": {
+            "kind": "resolution",
+            "digest": "0x2878849107af98ab12e7ff715749661fca3210462c80d572dde3b72b20c0086",
+            "note": "Decline this request. The block stands; nothing goes on-chain."
+          }
+        },
+        "signerAddress": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb"
+      },
+      "resolvedAt": 1793046174277,
+      "ownerPublicKeyAtResolution": "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2"
+    },
+    {
+      "id": "55cf16ef66fd7580",
+      "createdAt": 1792934687092,
+      "request": {
+        "user": "user:0x2502f82a773faa4bc2cec186dc2fca432fa36c22138f977ac5307ce74673d25",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "30",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "now": 1792934687
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "DECLINED",
+      "resolution": {
+        "type": "decline"
+      },
+      "signature": {
+        "scheme": "snip12-v1",
+        "r": "0x12f14299a5c6d7c402527cfad0635b05639fa0e322104d133341f4a281baf97",
+        "s": "0x434c8622d69437aa34e78549774dd8e840ca016402d194349377730cf7bbcdb",
+        "typedData": {
+          "types": {
+            "StarknetDomain": [
+              {
+                "name": "name",
+                "type": "shortstring"
+              },
+              {
+                "name": "version",
+                "type": "shortstring"
+              },
+              {
+                "name": "chainId",
+                "type": "shortstring"
+              },
+              {
+                "name": "revision",
+                "type": "shortstring"
+              }
+            ],
+            "MandateAction": [
+              {
+                "name": "kind",
+                "type": "shortstring"
+              },
+              {
+                "name": "digest",
+                "type": "felt"
+              },
+              {
+                "name": "note",
+                "type": "string"
+              }
+            ]
+          },
+          "primaryType": "MandateAction",
+          "domain": {
+            "name": "Demi Mandate",
+            "version": "1",
+            "chainId": "SN_SEPOLIA",
+            "revision": "1"
+          },
+          "message": {
+            "kind": "resolution",
+            "digest": "0x3639905e5047ad945b3a3ee53f7861f6d8f839bebe465efce387849140fbe91",
+            "note": "Decline this request. The block stands; nothing goes on-chain."
+          }
+        }
+      },
+      "resolvedAt": 1792949399156,
+      "ownerPublicKeyAtResolution": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0"
+    },
+    {
+      "id": "7c4e86b5b602d1f8",
+      "createdAt": 1792934708098,
+      "request": {
+        "user": "user:0x2502f82a773faa4bc2cec186dc2fca432fa36c22138f977ac5307ce74673d25",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "30",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "now": 1792934708
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "AMENDED",
+      "resolution": {
+        "type": "amend",
+        "amendment": {
+          "kind": "raise-per-call-cap",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "maxPerCall": "30"
+        }
+      },
+      "signature": {
+        "r": "0x38db92b906d148f0d18d38baef52653865451c72ea714cb74b419613042b0c0",
+        "s": "0x2377c7a9c238a4346bda8ebeda9654b9156108a55f8aeab95f71849128541cd"
+      },
+      "resolvedAt": 1792935171852,
+      "ownerPublicKeyAtResolution": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0"
+    },
+    {
+      "id": "15416da04fc96790",
+      "createdAt": 1792949067592,
+      "request": {
+        "user": "user:0x2502f82a773faa4bc2cec186dc2fca432fa36c22138f977ac5307ce74673d25",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "35",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "now": 1792949067
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "DECLINED",
+      "resolution": {
+        "type": "decline"
+      },
+      "signature": {
+        "scheme": "snip12-v1",
+        "r": "0x61af14fa7870fda77800c57e8ec779c80a72b57695ef12e63d6492c52552267",
+        "s": "0x5f2930ff8d12611e8a2b5348e57273c6cc40e2a0cf53fb9a22290abef09f5fc",
+        "typedData": {
+          "types": {
+            "StarknetDomain": [
+              {
+                "name": "name",
+                "type": "shortstring"
+              },
+              {
+                "name": "version",
+                "type": "shortstring"
+              },
+              {
+                "name": "chainId",
+                "type": "shortstring"
+              },
+              {
+                "name": "revision",
+                "type": "shortstring"
+              }
+            ],
+            "MandateAction": [
+              {
+                "name": "kind",
+                "type": "shortstring"
+              },
+              {
+                "name": "digest",
+                "type": "felt"
+              },
+              {
+                "name": "note",
+                "type": "string"
+              }
+            ]
+          },
+          "primaryType": "MandateAction",
+          "domain": {
+            "name": "Demi Mandate",
+            "version": "1",
+            "chainId": "SN_SEPOLIA",
+            "revision": "1"
+          },
+          "message": {
+            "kind": "resolution",
+            "digest": "0x29961468c8cb9ecfdad5b3d4554f92ecdaf8a303af7e7d5940ddbe7902a74fd",
+            "note": "Decline this request. The block stands; nothing goes on-chain."
+          }
+        }
+      },
+      "resolvedAt": 1792949110913,
+      "ownerPublicKeyAtResolution": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0"
+    },
+    {
+      "id": "6a5fa41e075425bf",
+      "createdAt": 1792953522577,
+      "request": {
+        "user": "user:0x2502f82a773faa4bc2cec186dc2fca432fa36c22138f977ac5307ce74673d25",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "35",
+          "token": "0x01f51d5179be8f437eddbcce8ece762d780ab2940e10cc6750c33fa9201494dd",
+          "now": 1792953522
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "DECLINED",
+      "resolution": {
+        "type": "decline"
+      },
+      "signature": {
+        "scheme": "wallet-snip12-v1",
+        "r": "0x757a0e231be2a0701e94fead216c60ecaa3ebf7cf44f0970847f8208b748a68",
+        "s": "0x1a69b999ef613341e0f1f78e81f979bfcf9cb1c5938f6e1236d22491ca7088d",
+        "typedData": {
+          "types": {
+            "StarknetDomain": [
+              {
+                "name": "name",
+                "type": "shortstring"
+              },
+              {
+                "name": "version",
+                "type": "shortstring"
+              },
+              {
+                "name": "chainId",
+                "type": "shortstring"
+              },
+              {
+                "name": "revision",
+                "type": "shortstring"
+              }
+            ],
+            "MandateAction": [
+              {
+                "name": "kind",
+                "type": "shortstring"
+              },
+              {
+                "name": "digest",
+                "type": "felt"
+              },
+              {
+                "name": "note",
+                "type": "string"
+              }
+            ]
+          },
+          "primaryType": "MandateAction",
+          "domain": {
+            "name": "Demi Mandate",
+            "version": "1",
+            "chainId": "SN_SEPOLIA",
+            "revision": "1"
+          },
+          "message": {
+            "kind": "resolution",
+            "digest": "0xc62da4f52550e4eb677e77d78dce7587838d9e02438ff431a50e2f72d0a5c5",
+            "note": "Decline this request. The block stands; nothing goes on-chain."
+          }
+        },
+        "signerAddress": "0xa1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f9"
+      },
+      "resolvedAt": 1792953623615,
+      "ownerPublicKeyAtResolution": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0"
+    },
+    {
+      "id": "aae8693c90a3adee",
+      "createdAt": 1793008759252,
+      "request": {
+        "user": "user:0x7d1d8cad365390adfb2f4f9f89277663c555d2eed790f1c4983c44a002570f1",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "40",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "now": 1793008759
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "APPROVED_ONCE",
+      "resolution": {
+        "type": "execute-once"
+      },
+      "signature": {
+        "scheme": "wallet-snip12-v1",
+        "r": "0x792935947b7fed13f50e21497937f6e171d51012b6685f4e4e94d37493526b1",
+        "s": "0x56f6c64f7d98b19b3cf4cd8089fbcaaba89da4a92658d6d26b996baea25fd6e",
+        "typedData": {
+          "types": {
+            "StarknetDomain": [
+              {
+                "name": "name",
+                "type": "shortstring"
+              },
+              {
+                "name": "version",
+                "type": "shortstring"
+              },
+              {
+                "name": "chainId",
+                "type": "shortstring"
+              },
+              {
+                "name": "revision",
+                "type": "shortstring"
+              }
+            ],
+            "MandateAction": [
+              {
+                "name": "kind",
+                "type": "shortstring"
+              },
+              {
+                "name": "digest",
+                "type": "felt"
+              },
+              {
+                "name": "note",
+                "type": "string"
+              }
+            ]
+          },
+          "primaryType": "MandateAction",
+          "domain": {
+            "name": "Demi Mandate",
+            "version": "1",
+            "chainId": "SN_SEPOLIA",
+            "revision": "1"
+          },
+          "message": {
+            "kind": "resolution",
+            "digest": "0x269e25cdde57c7ef8052d5c4fc0903b24d1da494f6189c5208b483d3e1f3a5d",
+            "note": "Approve once: 40 to 0x079e...cf38."
+          }
+        },
+        "signerAddress": "0x5c7b89fe362cf8dcc40176979b382799633930f0705b217434218de7b9af5ec"
+      },
+      "resolvedAt": 1793010047238,
+      "ownerPublicKeyAtResolution": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0"
+    },
+    {
+      "id": "417ed248985a4875",
+      "createdAt": 1793151429838,
+      "request": {
+        "user": "user:0x7d1d8cad365390adfb2f4f9f89277663c555d2eed790f1c4983c44a002570f1",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "150",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "now": 1793151429
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "AMENDED",
+      "resolution": {
+        "type": "amend",
+        "amendment": {
+          "kind": "allow-recipient",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38"
+        }
+      },
+      "signature": {
+        "scheme": "wallet-snip12-v1",
+        "r": "0xec263a2c7c5675863762b7fb2cda46d88b6d8d1f611ea0f81f8e90ee748ce2",
+        "s": "0x3bf639b72ae97f8a3968f49b5e5da782ecbc82c1801d108a21522f2a72f6ee6",
+        "signature": [
+          "0x1",
+          "0x0",
+          "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2",
+          "0xec263a2c7c5675863762b7fb2cda46d88b6d8d1f611ea0f81f8e90ee748ce2",
+          "0x3bf639b72ae97f8a3968f49b5e5da782ecbc82c1801d108a21522f2a72f6ee6"
+        ],
+        "signatureFormat": "standard",
+        "typedData": {
+          "types": {
+            "StarknetDomain": [
+              {
+                "name": "name",
+                "type": "shortstring"
+              },
+              {
+                "name": "version",
+                "type": "shortstring"
+              },
+              {
+                "name": "chainId",
+                "type": "shortstring"
+              },
+              {
+                "name": "revision",
+                "type": "shortstring"
+              }
+            ],
+            "MandateAction": [
+              {
+                "name": "kind",
+                "type": "shortstring"
+              },
+              {
+                "name": "digest",
+                "type": "felt"
+              },
+              {
+                "name": "note",
+                "type": "string"
+              }
+            ]
+          },
+          "primaryType": "MandateAction",
+          "domain": {
+            "name": "Demi Mandate",
+            "version": "1",
+            "chainId": "SN_SEPOLIA",
+            "revision": "1"
+          },
+          "message": {
+            "kind": "resolution",
+            "digest": "0x28d783b4dab3371a8fc0516e16d0821e695594b4c4546584e988b6e84a4130b",
+            "note": "Amend the mandate: allow 0x079e...cf38 to receive payments."
+          }
+        },
+        "signerAddress": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb"
+      },
+      "resolvedAt": 1793159904105,
+      "ownerPublicKeyAtResolution": "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2"
+    },
+    {
+      "id": "4883847fbc212efe",
+      "createdAt": 1793152296746,
+      "request": {
+        "user": "user:0x7d1d8cad365390adfb2f4f9f89277663c555d2eed790f1c4983c44a002570f1",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x16cb41ec11efcc9129d858ae07449f4f1a31d7d292269a5e7c40cd4d33db371",
+          "amount": "50",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "now": 1793152296
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "recipient-not-allowed",
+        "reason": "GateAccount: recipient not allowed",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "AMENDED",
+      "resolution": {
+        "type": "amend",
+        "amendment": {
+          "kind": "allow-recipient",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "recipient": "0x16cb41ec11efcc9129d858ae07449f4f1a31d7d292269a5e7c40cd4d33db371"
+        }
+      },
+      "signature": {
+        "scheme": "wallet-snip12-v1",
+        "r": "0x124e824ee51a6400ff0c4a7b35bfbb9cda76f3438b2849cb26b7937f9a0f9ae",
+        "s": "0x17b5393eca4f03dbf451bffdfe4cafcc017339911a9b4950a622e870448e077",
+        "signature": [
+          "0x1",
+          "0x0",
+          "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2",
+          "0x124e824ee51a6400ff0c4a7b35bfbb9cda76f3438b2849cb26b7937f9a0f9ae",
+          "0x17b5393eca4f03dbf451bffdfe4cafcc017339911a9b4950a622e870448e077"
+        ],
+        "signatureFormat": "standard",
+        "typedData": {
+          "types": {
+            "StarknetDomain": [
+              {
+                "name": "name",
+                "type": "shortstring"
+              },
+              {
+                "name": "version",
+                "type": "shortstring"
+              },
+              {
+                "name": "chainId",
+                "type": "shortstring"
+              },
+              {
+                "name": "revision",
+                "type": "shortstring"
+              }
+            ],
+            "MandateAction": [
+              {
+                "name": "kind",
+                "type": "shortstring"
+              },
+              {
+                "name": "digest",
+                "type": "felt"
+              },
+              {
+                "name": "note",
+                "type": "string"
+              }
+            ]
+          },
+          "primaryType": "MandateAction",
+          "domain": {
+            "name": "Demi Mandate",
+            "version": "1",
+            "chainId": "SN_SEPOLIA",
+            "revision": "1"
+          },
+          "message": {
+            "kind": "resolution",
+            "digest": "0x37fca16f30e30590442c29b9b4e543eedf11e04da8d94969870aee646098fcb",
+            "note": "Amend the mandate: allow 0x16cb...b371 to receive payments."
+          }
+        },
+        "signerAddress": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb"
+      },
+      "resolvedAt": 1793160033362,
+      "ownerPublicKeyAtResolution": "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2"
+    },
+    {
+      "id": "97dca512ed101c00",
+      "createdAt": 1793164994677,
+      "request": {
+        "user": "user:0x7d1d8cad365390adfb2f4f9f89277663c555d2eed790f1c4983c44a002570f1",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "150",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "now": 1793164994
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "AMENDED",
+      "resolution": {
+        "type": "amend",
+        "amendment": {
+          "kind": "raise-window-cap",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "maxPerWindow": "150"
+        }
+      },
+      "signature": {
+        "scheme": "wallet-snip12-v1",
+        "r": "0x14af5438bc727059334ec866a99e208b9a008c8ca57f27e61e3bbd983f8ba66",
+        "s": "0x119c43f346682f3c0482d0b45cd5e089adecc02feef7e5fdbe05cf7d1a1d38d",
+        "signature": [
+          "0x1",
+          "0x0",
+          "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2",
+          "0x14af5438bc727059334ec866a99e208b9a008c8ca57f27e61e3bbd983f8ba66",
+          "0x119c43f346682f3c0482d0b45cd5e089adecc02feef7e5fdbe05cf7d1a1d38d"
+        ],
+        "signatureFormat": "standard",
+        "typedData": {
+          "types": {
+            "StarknetDomain": [
+              {
+                "name": "name",
+                "type": "shortstring"
+              },
+              {
+                "name": "version",
+                "type": "shortstring"
+              },
+              {
+                "name": "chainId",
+                "type": "shortstring"
+              },
+              {
+                "name": "revision",
+                "type": "shortstring"
+              }
+            ],
+            "MandateAction": [
+              {
+                "name": "kind",
+                "type": "shortstring"
+              },
+              {
+                "name": "digest",
+                "type": "felt"
+              },
+              {
+                "name": "note",
+                "type": "string"
+              }
+            ]
+          },
+          "primaryType": "MandateAction",
+          "domain": {
+            "name": "Demi Mandate",
+            "version": "1",
+            "chainId": "SN_SEPOLIA",
+            "revision": "1"
+          },
+          "message": {
+            "kind": "resolution",
+            "digest": "0x631a56922e2452b5d76303dd8c29a9bc751ab17929a73268cb6a6e82aa33b8",
+            "note": "Amend the mandate: raise the window cap to 150. The per-call cap does not change."
+          }
+        },
+        "signerAddress": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb"
+      },
+      "resolvedAt": 1793167477720,
+      "ownerPublicKeyAtResolution": "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2"
+    },
+    {
+      "id": "a05edb2be7322ed1",
+      "createdAt": 1793175801048,
+      "request": {
+        "user": "user:0x7d1d8cad365390adfb2f4f9f89277663c555d2eed790f1c4983c44a002570f1",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "150",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "now": 1793175801
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "AMENDED",
+      "resolution": {
+        "type": "amend",
+        "amendment": {
+          "kind": "raise-per-call-cap",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "maxPerCall": "150"
+        }
+      },
+      "signature": {
+        "scheme": "wallet-snip12-v1",
+        "r": "0x3caf4c10c4d9e21c63f642275e88b3df40b1056d335e0bd7968d79b0c5a36f6",
+        "s": "0x5d0bff586fe62d1c1463ce1b6f602a03f1fe0533275b5039ff59dc524e831cd",
+        "signature": [
+          "0x1",
+          "0x0",
+          "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2",
+          "0x3caf4c10c4d9e21c63f642275e88b3df40b1056d335e0bd7968d79b0c5a36f6",
+          "0x5d0bff586fe62d1c1463ce1b6f602a03f1fe0533275b5039ff59dc524e831cd"
+        ],
+        "signatureFormat": "standard",
+        "typedData": {
+          "types": {
+            "StarknetDomain": [
+              {
+                "name": "name",
+                "type": "shortstring"
+              },
+              {
+                "name": "version",
+                "type": "shortstring"
+              },
+              {
+                "name": "chainId",
+                "type": "shortstring"
+              },
+              {
+                "name": "revision",
+                "type": "shortstring"
+              }
+            ],
+            "MandateAction": [
+              {
+                "name": "kind",
+                "type": "shortstring"
+              },
+              {
+                "name": "digest",
+                "type": "felt"
+              },
+              {
+                "name": "note",
+                "type": "string"
+              }
+            ]
+          },
+          "primaryType": "MandateAction",
+          "domain": {
+            "name": "Demi Mandate",
+            "version": "1",
+            "chainId": "SN_SEPOLIA",
+            "revision": "1"
+          },
+          "message": {
+            "kind": "resolution",
+            "digest": "0x2fb07f4ef54e71e40a7fe6127f848176bac2025ca6203052b92af39d1c1b665",
+            "note": "Amend the mandate: raise the per-call cap to 150."
+          }
+        },
+        "signerAddress": "0x22239d0077a2783757f87269b1fc0157dd603895c65e5d6a07ac5da4b1fcfb"
+      },
+      "resolvedAt": 1793175976622,
+      "ownerPublicKeyAtResolution": "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2"
+    }
+  ]
+}

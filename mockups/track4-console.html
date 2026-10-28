@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Demi Console — Track 4 design mockup</title>
+<!--
+  Hallmark · pre-emit critique: P5 H4 E4 S4 R5 V4
+  Hallmark · genre: modern-minimal · macrostructure: Workbench (app-console adaptation) · theme: Cobalt
+  · enrichment: none · nav: side-rail (app adaptation of N3) · footer: none (app UI)
+  Adaptation notes: this is an application console, not a landing page — no hero, no footer,
+  no ⌘K palette. Cobalt's "one dark beat" lives in the proof layer: every "Show the proof"
+  panel renders as a graphite machine-readout card. All sample data; real tx hashes marked LIVE.
+  DESIGN MOCKUP — throwaway visual proposal for the Track 4 in-place redesign.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  /* palette — locked tokens (Cobalt) */
+  --color-paper: oklch(98.5% 0.004 250);
+  --color-surface: oklch(99.4% 0.002 250);
+  --color-ink: oklch(24% 0.02 258);
+  --color-ink-2: oklch(34% 0.018 257);
+  --color-ink-3: oklch(52% 0.015 257);
+  --color-rule: oklch(90% 0.005 255);
+  --color-rule-2: oklch(83% 0.008 255);
+  --color-accent: oklch(58% 0.20 256);
+  --color-accent-deep: oklch(48% 0.19 256);
+  --color-accent-ink: oklch(98.5% 0.004 250);
+  --color-accent-soft: oklch(95% 0.022 256);
+  --color-graphite: oklch(22% 0.016 260);
+  --color-graphite-rule: oklch(34% 0.018 260);
+  --color-graphite-ink: oklch(92% 0.006 255);
+  --color-graphite-muted: oklch(66% 0.015 258);
+  --color-ok: oklch(50% 0.11 158);
+  --color-ok-soft: oklch(95.5% 0.028 158);
+  --color-wait: oklch(58% 0.13 75);
+  --color-wait-soft: oklch(95.5% 0.038 85);
+  --color-stop: oklch(52% 0.17 25);
+  --color-stop-soft: oklch(95.5% 0.022 25);
+  /* type */
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+  /* space — 4pt */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
+  /* radii */
+  --radius-ctl: 6px; --radius-card: 10px;
+}
+*{ box-sizing:border-box; margin:0; }
+html,body{ overflow-x:clip; }
+body{
+  background:var(--color-paper); color:var(--color-ink-2);
+  font:400 15px/1.55 var(--font-body);
+  -webkit-font-smoothing:antialiased;
+  display:grid; grid-template-columns:248px minmax(0,1fr); min-height:100vh;
+}
+h1,h2,h3{ font-family:var(--font-display); color:var(--color-ink); font-style:normal; letter-spacing:-0.02em; }
+a{ color:var(--color-accent-deep); text-decoration:none; }
+a:hover{ text-decoration:underline; text-underline-offset:3px; }
+:focus-visible{ outline:2px solid var(--color-accent); outline-offset:2px; border-radius:2px; }
+.mono-label{ font:500 11px/1 var(--font-mono); letter-spacing:.06em; text-transform:uppercase; color:var(--color-ink-3); }
+.num{ font-family:var(--font-display); font-variant-numeric:tabular-nums; letter-spacing:-0.02em; color:var(--color-ink); }
+
+/* ---------- rail ---------- */
+.rail{
+  border-right:1px solid var(--color-rule); background:var(--color-surface);
+  padding:var(--space-5) var(--space-4); display:flex; flex-direction:column; gap:var(--space-5);
+  position:sticky; top:0; height:100vh;
+}
+.brand{ display:flex; align-items:baseline; gap:var(--space-2); padding:0 var(--space-2); }
+.brand strong{ font:600 20px/1 var(--font-display); letter-spacing:-0.02em; color:var(--color-ink); }
+.brand span{ font:500 10px/1 var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--color-ink-3); }
+.nav{ display:flex; flex-direction:column; gap:2px; }
+.nav a{
+  display:flex; align-items:center; gap:var(--space-3); padding:9px var(--space-3);
+  border-radius:var(--radius-ctl); color:var(--color-ink-2); font-weight:500; font-size:14px;
+  border:1px solid transparent; text-decoration:none;
+}
+.nav a svg{ flex:none; color:var(--color-ink-3); }
+.nav a:hover{ background:var(--color-paper); border-color:var(--color-rule); text-decoration:none; }
+.nav a[aria-current="page"]{ background:var(--color-accent-soft); color:var(--color-accent-deep); border-color:oklch(88% 0.04 256); }
+.nav a[aria-current="page"] svg{ color:var(--color-accent); }
+.nav .count{
+  margin-left:auto; font:600 11px/16px var(--font-mono); min-width:18px; text-align:center;
+  background:var(--color-wait-soft); color:oklch(45% 0.11 70); border-radius:9px; padding:0 5px;
+}
+.nav .count[hidden]{ display:none; }
+.rail-foot{ margin-top:auto; padding:var(--space-3); border:1px solid var(--color-rule); border-radius:var(--radius-ctl); }
+.rail-foot .dot{ display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--color-ok); margin-right:6px; }
+.rail-foot p{ font-size:12.5px; color:var(--color-ink-3); margin-top:var(--space-1); }
+
+/* ---------- main ---------- */
+main{ padding:var(--space-6) var(--space-7); max-width:1060px; }
+.screen{ display:none; }
+.screen.is-active{ display:block; animation:screen-in .25s cubic-bezier(0.16,1,0.3,1); }
+@keyframes screen-in{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+.screen-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:var(--space-4); margin-bottom:var(--space-6); flex-wrap:wrap; }
+.screen-head h1{ font-size:26px; font-weight:600; }
+.screen-head p{ color:var(--color-ink-3); font-size:14px; margin-top:var(--space-1); max-width:56ch; }
+.head-chips{ display:flex; gap:var(--space-2); align-items:center; flex-wrap:wrap; }
+.chip{
+  display:inline-flex; align-items:center; gap:6px; padding:3px 9px; border-radius:4px;
+  font:500 11px/1.4 var(--font-mono); letter-spacing:.05em; text-transform:uppercase; white-space:nowrap;
+}
+.chip--mock{ background:var(--color-paper); border:1px solid var(--color-rule-2); color:var(--color-ink-3); }
+.chip--ok{ background:var(--color-ok-soft); color:var(--color-ok); }
+.chip--wait{ background:var(--color-wait-soft); color:oklch(45% 0.11 70); }
+.chip--stop{ background:var(--color-stop-soft); color:var(--color-stop); }
+.chip--info{ background:var(--color-accent-soft); color:var(--color-accent-deep); }
+
+/* cards + grids */
+.card{ background:var(--color-surface); border:1px solid var(--color-rule); border-radius:var(--radius-card); padding:var(--space-5); }
+.card + .card{ margin-top:var(--space-4); }
+.card-title{ font-size:16px; font-weight:600; margin-bottom:var(--space-3); }
+.card-note{ font-size:13px; color:var(--color-ink-3); }
+.grid-2{ display:grid; grid-template-columns:minmax(0,7fr) minmax(0,5fr); gap:var(--space-4); align-items:start; }
+.stats{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr); gap:var(--space-4); margin-bottom:var(--space-4); }
+.stat{ background:var(--color-surface); border:1px solid var(--color-rule); border-radius:var(--radius-card); padding:var(--space-4) var(--space-5); }
+.stat .big{ font-size:34px; font-weight:600; line-height:1.1; margin:var(--space-2) 0 2px; }
+.stat .sub{ font-size:13px; color:var(--color-ink-3); }
+.bar{ height:6px; border-radius:3px; background:var(--color-paper); border:1px solid var(--color-rule); margin-top:var(--space-3); overflow:hidden; }
+.bar i{ display:block; height:100%; width:40%; background:var(--color-accent); border-radius:3px 0 0 3px; }
+
+/* lists */
+.rows{ display:flex; flex-direction:column; }
+.row{ display:flex; align-items:center; gap:var(--space-3); padding:var(--space-3) 0; border-top:1px solid var(--color-rule); flex-wrap:wrap; }
+.row:first-child{ border-top:0; }
+.row .what{ flex:1 1 240px; min-width:0; }
+.row .what strong{ color:var(--color-ink); font-weight:600; font-size:14px; }
+.row .what p, .row .when{ font-size:12.5px; color:var(--color-ink-3); }
+.row .when{ font:400 11.5px/1 var(--font-mono); white-space:nowrap; }
+
+/* buttons */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--space-2);
+  font:500 14px/1 var(--font-body); padding:10px 16px; border-radius:var(--radius-ctl);
+  border:1px solid var(--color-rule-2); background:var(--color-surface); color:var(--color-ink);
+  cursor:pointer; transition:background .15s ease, border-color .15s ease, transform .1s ease;
+  text-decoration:none; white-space:nowrap;
+}
+.btn:hover{ border-color:var(--color-ink-3); text-decoration:none; }
+.btn:active{ transform:translateY(1px); }
+.btn--primary{ background:var(--color-accent); border-color:var(--color-accent); color:var(--color-accent-ink); font-weight:600; }
+.btn--primary:hover{ background:var(--color-accent-deep); border-color:var(--color-accent-deep); }
+.btn--quiet{ border-color:transparent; background:transparent; color:var(--color-ink-2); }
+.btn--quiet:hover{ border-color:var(--color-rule-2); background:var(--color-surface); }
+.btn--stop{ color:var(--color-stop); }
+.btn--stop:hover{ border-color:var(--color-stop); }
+.btn--sm{ padding:7px 12px; font-size:13px; }
+.btn-row{ display:flex; gap:var(--space-3); align-items:center; flex-wrap:wrap; margin-top:var(--space-4); }
+
+/* forms */
+.form-row{ display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:flex-end; }
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{ font:500 11px/1 var(--font-mono); letter-spacing:.06em; text-transform:uppercase; color:var(--color-ink-3); }
+.field input, .field select{
+  font:400 15px/1.2 var(--font-body); padding:10px 12px; border-radius:var(--radius-ctl);
+  border:1px solid var(--color-rule-2); background:var(--color-surface); color:var(--color-ink); min-width:0;
+}
+.field input{ width:140px; font-variant-numeric:tabular-nums; }
+.field select{ min-width:210px; }
+.field input:hover, .field select:hover{ border-color:var(--color-ink-3); }
+
+/* verdicts */
+.verdict{ margin-top:var(--space-5); border:1px solid var(--color-rule); border-left:3px solid var(--color-rule-2); border-radius:var(--radius-ctl); padding:var(--space-4) var(--space-5); background:var(--color-surface); animation:screen-in .25s cubic-bezier(0.16,1,0.3,1); }
+.verdict[data-kind="ok"]{ border-left-color:var(--color-ok); }
+.verdict[data-kind="wait"]{ border-left-color:var(--color-wait); }
+.verdict[data-kind="stop"]{ border-left-color:var(--color-stop); }
+.verdict h3{ font-size:15.5px; font-weight:600; margin:var(--space-2) 0 4px; }
+.verdict p{ font-size:13.5px; color:var(--color-ink-3); }
+.verdict[hidden]{ display:none; }
+
+/* proof layer — the graphite machine readout */
+details.proof{ margin-top:var(--space-4); }
+details.proof summary{
+  cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:8px;
+  font:500 11px/1 var(--font-mono); letter-spacing:.06em; text-transform:uppercase; color:var(--color-ink-3);
+  padding:6px 0; user-select:none;
+}
+details.proof summary::-webkit-details-marker{ display:none; }
+details.proof summary::before{ content:"▸"; color:var(--color-accent); font-size:10px; transition:transform .15s ease; }
+details.proof[open] summary::before{ transform:rotate(90deg); }
+details.proof summary:hover{ color:var(--color-accent-deep); }
+.graphite{
+  background:var(--color-graphite); border:1px solid var(--color-graphite-rule); border-radius:var(--radius-card);
+  padding:var(--space-4) var(--space-5); font:400 12.5px/1.7 var(--font-mono); color:var(--color-graphite-ink);
+  overflow-wrap:anywhere; animation:screen-in .2s cubic-bezier(0.16,1,0.3,1);
+}
+.graphite .k{ color:var(--color-graphite-muted); }
+.graphite .v{ color:var(--color-graphite-ink); }
+.graphite .sig{ color:oklch(75% 0.13 256); }
+.graphite a{ color:oklch(80% 0.11 256); text-decoration:underline; text-underline-offset:3px; }
+.graphite .bar-top{ display:flex; justify-content:space-between; gap:var(--space-3); border-bottom:1px solid var(--color-graphite-rule); padding-bottom:var(--space-2); margin-bottom:var(--space-3); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--color-graphite-muted); }
+
+/* tour */
+.steps{ counter-reset:step; display:flex; flex-direction:column; gap:var(--space-4); margin:var(--space-5) 0; }
+.step{ display:flex; gap:var(--space-4); align-items:flex-start; }
+.step::before{
+  counter-increment:step; content:counter(step);
+  flex:none; width:30px; height:30px; border-radius:50%; border:1px solid var(--color-rule-2);
+  display:flex; align-items:center; justify-content:center;
+  font:600 13px/1 var(--font-mono); color:var(--color-accent-deep); background:var(--color-surface);
+}
+.step h3{ font-size:15px; font-weight:600; }
+.step p{ font-size:13.5px; color:var(--color-ink-3); max-width:60ch; }
+.tour-caption{
+  position:fixed; right:var(--space-5); bottom:var(--space-5); z-index:40; max-width:340px;
+  background:var(--color-graphite); color:var(--color-graphite-ink); border:1px solid var(--color-graphite-rule);
+  border-radius:var(--radius-card); padding:var(--space-4) var(--space-5);
+  box-shadow:0 1px 2px oklch(24% 0.02 258 / 0.05); animation:screen-in .25s cubic-bezier(0.16,1,0.3,1);
+}
+.tour-caption[hidden]{ display:none; }
+.tour-caption p{ font-size:13.5px; margin:6px 0 var(--space-3); color:var(--color-graphite-ink); }
+.tour-caption .btn{ background:transparent; border-color:var(--color-graphite-rule); color:var(--color-graphite-ink); }
+.tour-caption .btn:hover{ border-color:oklch(75% 0.13 256); }
+.nav a.tour-hl{ box-shadow:0 0 0 2px var(--color-accent); }
+
+/* modal */
+.backdrop{ position:fixed; inset:0; background:oklch(24% 0.02 258 / 0.35); display:flex; align-items:center; justify-content:center; z-index:50; padding:var(--space-4); }
+.backdrop[hidden]{ display:none; }
+.modal{ background:var(--color-surface); border:1px solid var(--color-rule-2); border-radius:var(--radius-card); max-width:420px; padding:var(--space-5); }
+.modal h2{ font-size:17px; margin-bottom:var(--space-2); }
+.modal p{ font-size:14px; color:var(--color-ink-3); }
+
+.success-flash{ border-color:var(--color-ok); }
+.skip{ position:absolute; left:-9999px; }
+.skip:focus{ left:var(--space-4); top:var(--space-4); z-index:60; background:var(--color-surface); padding:8px 14px; border:1px solid var(--color-accent); border-radius:var(--radius-ctl); }
+
+/* responsive — rail becomes a top bar */
+@media (max-width: 900px){
+  body{ grid-template-columns:minmax(0,1fr); }
+  .rail{ position:static; height:auto; flex-direction:row; align-items:center; gap:var(--space-3); padding:var(--space-3) var(--space-4); border-right:0; border-bottom:1px solid var(--color-rule); flex-wrap:wrap; }
+  .nav{ flex-direction:row; overflow-x:auto; flex:1 1 100%; order:3; }
+  .nav a{ white-space:nowrap; }
+  .rail-foot{ margin:0 0 0 auto; padding:6px 10px; }
+  .rail-foot p{ display:none; }
+  main{ padding:var(--space-5) var(--space-4); }
+  .stats{ grid-template-columns:minmax(0,1fr); }
+  .grid-2{ grid-template-columns:minmax(0,1fr); }
+  .tour-caption{ right:var(--space-3); left:var(--space-3); bottom:var(--space-3); max-width:none; }
+}
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation:none !important; transition:none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<aside class="rail">
+  <div class="brand"><strong>Demi</strong> <span>console</span></div>
+  <nav class="nav" aria-label="Screens">
+    <a href="#rules" data-nav="rules">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12"/><circle cx="5" cy="4" r="1.6" fill="var(--color-surface)"/><circle cx="10" cy="8" r="1.6" fill="var(--color-surface)"/><circle cx="6" cy="12" r="1.6" fill="var(--color-surface)"/></svg>
+      The rules</a>
+    <a href="#requests" data-nav="requests">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 13 13 3M6 3h7v7"/></svg>
+      Requests</a>
+    <a href="#waiting" data-nav="waiting">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l2.5 1.5"/></svg>
+      Waiting for you <span class="count" id="waiting-count">1</span></a>
+    <a href="#history" data-nav="history">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h7"/></svg>
+      History</a>
+    <a href="#tour" data-nav="tour">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="m10.5 5.5-1.7 4.3-4.3 1.7 1.7-4.3z"/></svg>
+      How it works</a>
+  </nav>
+  <div class="rail-foot">
+    <span class="mono-label"><span class="dot" aria-hidden="true"></span>Owner wallet connected</span>
+    <p>Argent X · nothing moves without your signature</p>
+  </div>
+</aside>
+
+<main id="main">
+
+  <!-- ============ THE RULES ============ -->
+  <section class="screen" id="rules" aria-labelledby="rules-h">
+    <div class="screen-head">
+      <div>
+        <h1 id="rules-h">The rules</h1>
+        <p>What your agent is allowed to do with your money right now. Only you can change these — every change needs your signature.</p>
+      </div>
+      <div class="head-chips"><span class="chip chip--mock">Design mockup · sample data</span><span class="chip chip--ok">On-chain · Sepolia</span></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="mono-label">Max per request</span>
+        <div class="big num">150</div>
+        <div class="sub">units, any single payment</div>
+      </div>
+      <div class="stat">
+        <span class="mono-label">This month</span>
+        <div class="big num">240 <span style="font-size:17px;color:var(--color-ink-3);font-weight:500;">of 600</span></div>
+        <div class="bar" role="img" aria-label="240 of 600 units spent this month"><i></i></div>
+      </div>
+      <div class="stat">
+        <span class="mono-label">Approved merchants</span>
+        <div class="big num">3</div>
+        <div class="sub">nobody else can be paid</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2 class="card-title">Your agent</h2>
+        <div class="rows">
+          <div class="row"><div class="what"><strong>Trading Agent v1</strong><p>Can pay approved merchants within your limits. Cannot change the limits. Cannot pay anyone else. Cannot hold your key.</p></div><span class="chip chip--ok">Active</span></div>
+        </div>
+        <details class="proof">
+          <summary>Show the proof</summary>
+          <div class="graphite">
+            <div class="bar-top"><span>session · gate binding</span><span>sample</span></div>
+            <span class="k">session_key</span> <span class="v">0x04a1…9f2c</span><br/>
+            <span class="k">bound_gate</span> <span class="v">0x07b3…d41e</span><br/>
+            <span class="k">authority</span> <span class="v">spend_within_limits(merchant∈allowlist)</span>
+          </div>
+        </details>
+      </div>
+      <div class="card">
+        <h2 class="card-title">The lock</h2>
+        <p style="font-size:14px;">One key opens this: <strong style="color:var(--color-ink);">yours</strong>, inside your wallet. It never lives on a server — not ours, not anyone's. Changing any rule = you signing on-chain.</p>
+        <details class="proof">
+          <summary>Show the proof</summary>
+          <div class="graphite">
+            <div class="bar-top"><span>ownership</span><span>sample</span></div>
+            <span class="k">owner_key</span> <span class="v">0x02f8…b077</span><br/>
+            <span class="k">held_by</span> <span class="v">Argent X (your browser)</span><br/>
+            <span class="k">server_holds</span> <span class="sig">nothing</span>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Approved merchants</h2>
+      <div class="rows">
+        <div class="row"><div class="what"><strong>CloudCompute Inc</strong><p>server hosting</p></div><span class="chip chip--ok">Approved</span></div>
+        <div class="row"><div class="what"><strong>DataStore API</strong><p>market data</p></div><span class="chip chip--ok">Approved</span></div>
+        <div class="row"><div class="what"><strong>ShipIt Logistics</strong><p>shipping</p></div><span class="chip chip--ok">Approved</span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn--primary" type="button" data-modal="rules">Change the rules</button>
+        <span class="card-note">opens a form — you sign the change in your wallet</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REQUESTS ============ -->
+  <section class="screen" id="requests" aria-labelledby="requests-h">
+    <div class="screen-head">
+      <div>
+        <h1 id="requests-h">Requests</h1>
+        <p>Every payment your agent wants to make hits the gate first. Try one — this is the exact decision the gate makes, live on-chain.</p>
+      </div>
+      <div class="head-chips"><span class="chip chip--mock">Design mockup · sample data</span></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Ask as the agent</h2>
+      <form class="form-row" id="ask-form">
+        <div class="field">
+          <label for="ask-amount">Amount (units)</label>
+          <input id="ask-amount" type="number" min="1" step="1" placeholder="e.g. 120" required />
+        </div>
+        <div class="field">
+          <label for="ask-merchant">Pay to</label>
+          <select id="ask-merchant">
+            <option value="CloudCompute Inc">CloudCompute Inc</option>
+            <option value="DataStore API">DataStore API</option>
+            <option value="ShipIt Logistics">ShipIt Logistics</option>
+            <option value="Stranger LLC">Stranger LLC (not on your list)</option>
+          </select>
+        </div>
+        <button class="btn btn--primary" type="submit">Check request</button>
+      </form>
+
+      <div class="verdict" id="verdict" hidden aria-live="polite">
+        <span class="chip" id="verdict-chip"></span>
+        <h3 id="verdict-title"></h3>
+        <p id="verdict-text"></p>
+        <div class="btn-row" id="verdict-actions" hidden>
+          <a class="btn btn--sm" href="#waiting">See it in Waiting for you</a>
+        </div>
+        <details class="proof">
+          <summary>Show the proof</summary>
+          <div class="graphite" id="verdict-proof"></div>
+        </details>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Recent asks</h2>
+      <div class="rows">
+        <div class="row"><span class="when">10:02</span><div class="what"><strong>CloudCompute Inc · 120</strong><p>within your rules</p></div><span class="chip chip--ok">Went through automatically</span></div>
+        <div class="row"><span class="when">09:41</span><div class="what"><strong>DataStore API · 400</strong><p>over your per-request limit</p></div><span class="chip chip--info">You approved it</span></div>
+        <div class="row"><span class="when">Yesterday</span><div class="what"><strong>ShipIt Logistics · 900</strong><p>over your monthly limit</p></div><span class="chip chip--stop">You refused it</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WAITING FOR YOU ============ -->
+  <section class="screen" id="waiting" aria-labelledby="waiting-h">
+    <div class="screen-head">
+      <div>
+        <h1 id="waiting-h">Waiting for you</h1>
+        <p>Anything here tried to go over your rules. It stopped — nothing moved. It waits until you decide.</p>
+      </div>
+      <div class="head-chips"><span class="chip chip--mock">Design mockup · sample data</span></div>
+    </div>
+
+    <div class="card" id="pending-card">
+      <div style="display:flex;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;align-items:center;">
+        <h2 class="card-title" style="margin-bottom:0;">DataStore API wants 400 units</h2>
+        <span class="chip chip--wait">Waiting since 09:41</span>
+      </div>
+      <p style="font-size:14px;margin-top:var(--space-3);">Your limit is 150 per request, so the gate stopped it. <strong style="color:var(--color-ink);">No money moved.</strong> Your choices:</p>
+      <div class="btn-row">
+        <button class="btn btn--primary" type="button" id="approve-btn">Approve once — sign in wallet</button>
+        <button class="btn btn--stop" type="button" id="refuse-btn">Refuse</button>
+        <button class="btn btn--quiet" type="button" data-modal="rules">Change the rules instead</button>
+      </div>
+      <details class="proof">
+        <summary>Show the proof</summary>
+        <div class="graphite">
+          <div class="bar-top"><span>proposal 97dca512ed101c00</span><span>sample</span></div>
+          <span class="k">requested</span> <span class="v">400 → DataStore API</span><br/>
+          <span class="k">policy.per_call</span> <span class="v">150</span> <span class="k">→ verdict</span> <span class="sig">ABOVE_LIMIT</span><br/>
+          <span class="k">needs</span> <span class="v">owner signature (SNIP-9, your wallet)</span>
+        </div>
+      </details>
+    </div>
+
+    <div class="card" id="decided-card">
+      <h2 class="card-title">Recently decided</h2>
+      <div class="rows" id="decided-rows">
+        <div class="row"><span class="when">Yesterday</span><div class="what"><strong>ShipIt Logistics · 900</strong><p>over monthly limit</p></div><span class="chip chip--stop">You refused</span></div>
+        <div class="row"><span class="when">Mon</span><div class="what"><strong>CloudCompute Inc · 200</strong><p>over per-request limit</p></div><span class="chip chip--info">You approved once</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HISTORY ============ -->
+  <section class="screen" id="history" aria-labelledby="history-h">
+    <div class="screen-head">
+      <div>
+        <h1 id="history-h">History</h1>
+        <p>Every action, forever. Nothing here can be edited or deleted — the receipts live on-chain.</p>
+      </div>
+      <div class="head-chips"><span class="chip chip--mock">Design mockup</span><span class="chip chip--ok">2 live receipts</span></div>
+    </div>
+
+    <div class="card">
+      <div class="rows" id="history-rows">
+        <div class="row"><span class="when">Oct 28</span><div class="what"><strong>You raised the per-request limit to 150</strong><p>signed in your wallet · recorded on-chain</p></div><span class="chip chip--ok">Live</span>
+          <details class="proof" style="flex-basis:100%;margin-top:var(--space-2);">
+            <summary>Show the proof</summary>
+            <div class="graphite">
+              <div class="bar-top"><span>transaction · live</span><span>block 17272013</span></div>
+              <span class="k">tx</span> <a href="https://sepolia.voyager.online/tx/0x205710f6a197c017bc096c19538c0ff8114203fb1c80396e4e891c335e251fb" target="_blank" rel="noopener">0x205710f6a197…e251fb ↗</a><br/>
+              <span class="k">effect</span> <span class="v">per_call 120 → 150</span> <span class="k">· wallet nonce</span> <span class="v">7</span>
+            </div>
+          </details>
+        </div>
+        <div class="row"><span class="when">Oct 27</span><div class="what"><strong>You changed your monthly limit rules</strong><p>signed in your wallet · recorded on-chain</p></div><span class="chip chip--ok">Live</span>
+          <details class="proof" style="flex-basis:100%;margin-top:var(--space-2);">
+            <summary>Show the proof</summary>
+            <div class="graphite">
+              <div class="bar-top"><span>transaction · live</span><span>block 17267240</span></div>
+              <span class="k">tx</span> <a href="https://sepolia.voyager.online/tx/0x69b20e5cd9878a416448f99002c491aa2888c8bb757ef19c73e44c510a7fa0d" target="_blank" rel="noopener">0x69b20e5cd987…a7fa0d ↗</a><br/>
+              <span class="k">effect</span> <span class="v">window cap amendment applied</span>
+            </div>
+          </details>
+        </div>
+        <div class="row"><span class="when">10:02</span><div class="what"><strong>Agent paid CloudCompute Inc · 120</strong><p>within your rules — automatic</p></div><span class="chip chip--info">Sample</span></div>
+        <div class="row"><span class="when">09:58</span><div class="what"><strong>Agent asked DataStore API · 400</strong><p>over limit — you approved once</p></div><span class="chip chip--info">Sample</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="screen" id="tour" aria-labelledby="tour-h">
+    <div class="screen-head">
+      <div>
+        <h1 id="tour-h">How it works</h1>
+        <p>The whole idea in five sentences. This is the tour you'd show anyone — no crypto knowledge needed.</p>
+      </div>
+      <div class="head-chips"><span class="chip chip--mock">Design mockup · sample data</span></div>
+    </div>
+
+    <div class="card">
+      <div class="steps">
+        <div class="step"><div><h3>You set the rules</h3><p>How much your agent may spend — per request and per month — and who it may pay.</p></div></div>
+        <div class="step"><div><h3>Your agent works</h3><p>Every payment it attempts hits the gate on-chain first. The gate checks it against your rules.</p></div></div>
+        <div class="step"><div><h3>Inside the rules — automatic</h3><p>The payment goes through. You are not bothered. It's logged in History.</p></div></div>
+        <div class="step"><div><h3>Over the rules — it stops</h3><p>Nothing moves. The request lands in Waiting for you, with a plain explanation of why.</p></div></div>
+        <div class="step"><div><h3>You decide — by signature</h3><p>Approve once, refuse, or change the rules. Every option requires your wallet signature. Every step is recorded on-chain, forever.</p></div></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn--primary" type="button" id="tour-start">Show me how it works</button>
+        <span class="card-note">a guided walkthrough of each screen</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- mockup modal -->
+<div class="backdrop" id="backdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-h">
+    <h2 id="modal-h">This is a design mockup</h2>
+    <p id="modal-p">In the real console, your wallet opens here and you sign. Nothing ever happens without that signature — the server can't act for you.</p>
+    <div class="btn-row"><button class="btn btn--primary" type="button" id="modal-ok">Got it</button></div>
+  </div>
+</div>
+
+<!-- tour caption -->
+<div class="tour-caption" id="tour-caption" hidden role="status">
+  <span class="mono-label" style="color:var(--color-graphite-muted);">Guided tour</span>
+  <p id="tour-text"></p>
+  <div class="btn-row" style="margin-top:0;">
+    <button class="btn btn--sm" type="button" id="tour-next">Next</button>
+    <button class="btn btn--sm btn--quiet" type="button" id="tour-end" style="color:var(--color-graphite-muted);">End tour</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(s, r){ return (r||document).querySelector(s); };
+  var $$ = function(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+
+  /* ---- routing ---- */
+  var ROUTES = ["rules","requests","waiting","history","tour"];
+  function current(){ var m = location.hash.match(/^#(\w+)/); return m && ROUTES.indexOf(m[1]) >= 0 ? m[1] : "rules"; }
+  function navigate(){
+    var r = current();
+    $$(".screen").forEach(function(s){ s.classList.toggle("is-active", s.id === r); });
+    $$(".nav a").forEach(function(a){
+      if (a.dataset.nav === r) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+    });
+    window.scrollTo(0,0);
+  }
+  window.addEventListener("hashchange", navigate);
+
+  /* ---- request verdict (mirrors the real gate's decision, client-side sample) ---- */
+  var PER_CALL = 150, MONTH_LEFT = 360;
+  var waitingAdds = 0;
+  $("#ask-form").addEventListener("submit", function(e){
+    e.preventDefault();
+    var amt = parseInt($("#ask-amount").value, 10);
+    var to = $("#ask-merchant").value;
+    if (!amt || amt < 1) return;
+    var v = $("#verdict"), chip = $("#verdict-chip"), title = $("#verdict-title"),
+        text = $("#verdict-text"), proof = $("#verdict-proof"), actions = $("#verdict-actions");
+    var approved = to !== "Stranger LLC";
+    v.hidden = false; actions.hidden = true;
+    if (!approved){
+      v.dataset.kind = "stop";
+      chip.className = "chip chip--stop"; chip.textContent = "Stopped";
+      title.textContent = to + " is not on your list";
+      text.textContent = "Your agent can only pay approved merchants. Nothing moved.";
+      proof.innerHTML = '<div class="bar-top"><span>gate check</span><span>sample</span></div>' +
+        '<span class="k">merchant</span> <span class="v">' + to + '</span> <span class="k">∈ allowlist</span> <span class="sig">false</span><br/>' +
+        '<span class="k">verdict</span> <span class="sig">NOT_ALLOWED</span> <span class="k">· calls executed</span> <span class="v">0</span>';
+    } else if (amt > PER_CALL){
+      v.dataset.kind = "wait";
+      chip.className = "chip chip--wait"; chip.textContent = "Needs your signature";
+      title.textContent = amt + " units is over your " + PER_CALL + "-per-request limit";
+      text.textContent = "The gate stopped it — nothing moved. It's now waiting for you to approve once, refuse, or change the rules.";
+      actions.hidden = false;
+      waitingAdds++; updateBadge();
+      proof.innerHTML = '<div class="bar-top"><span>gate check</span><span>sample</span></div>' +
+        '<span class="k">amount</span> <span class="v">' + amt + '</span> <span class="k">&gt; policy.per_call</span> <span class="v">' + PER_CALL + '</span><br/>' +
+        '<span class="k">verdict</span> <span class="sig">ABOVE_LIMIT</span> <span class="k">· routed to</span> <span class="v">owner approval</span>';
+    } else if (amt > MONTH_LEFT){
+      v.dataset.kind = "wait";
+      chip.className = "chip chip--wait"; chip.textContent = "Needs your signature";
+      title.textContent = "That would go over this month's limit";
+      text.textContent = "You have " + MONTH_LEFT + " units left this month. The gate stopped it — nothing moved.";
+      actions.hidden = false;
+      waitingAdds++; updateBadge();
+      proof.innerHTML = '<div class="bar-top"><span>gate check</span><span>sample</span></div>' +
+        '<span class="k">amount</span> <span class="v">' + amt + '</span> <span class="k">&gt; window remaining</span> <span class="v">' + MONTH_LEFT + '</span><br/>' +
+        '<span class="k">verdict</span> <span class="sig">ABOVE_WINDOW</span>';
+    } else {
+      v.dataset.kind = "ok";
+      chip.className = "chip chip--ok"; chip.textContent = "Within your rules";
+      title.textContent = amt + " units to " + to + " — goes through automatically";
+      text.textContent = "No proposal, no interruption. It's logged in History with its receipt.";
+      proof.innerHTML = '<div class="bar-top"><span>gate check</span><span>sample</span></div>' +
+        '<span class="k">amount</span> <span class="v">' + amt + '</span> <span class="k">≤ policy.per_call</span> <span class="v">' + PER_CALL + '</span><br/>' +
+        '<span class="k">merchant</span> <span class="v">' + to + '</span> <span class="k">∈ allowlist</span> <span class="v">true</span><br/>' +
+        '<span class="k">verdict</span> <span class="sig">WITHIN_MANDATE</span> <span class="k">· owner action</span> <span class="v">none needed</span>';
+    }
+  });
+  function updateBadge(){
+    var b = $("#waiting-count");
+    var n = ($("#pending-card").hidden ? 0 : 1) + waitingAdds;
+    b.textContent = n; b.hidden = n === 0;
+  }
+
+  /* ---- approve / refuse flow ---- */
+  $("#approve-btn").addEventListener("click", function(){
+    openModal(function(){
+      var c = $("#pending-card");
+      c.classList.add("success-flash");
+      c.querySelector("h2").textContent = "DataStore API · 400 — approved";
+      c.querySelector(".chip").className = "chip chip--ok";
+      c.querySelector(".chip").textContent = "You signed it";
+      $(".btn-row", c).remove();
+      var row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = '<span class="when">Just now</span><div class="what"><strong>DataStore API · 400</strong><p>over per-request limit — you approved once (mockup)</p></div><span class="chip chip--ok">You signed it</span>';
+      $("#decided-rows").insertBefore(row, $("#decided-rows").firstChild);
+      var hrow = document.createElement("div");
+      hrow.className = "row";
+      hrow.innerHTML = '<span class="when">Just now</span><div class="what"><strong>You approved DataStore API · 400, once</strong><p>rules unchanged · signed in your wallet</p></div><span class="chip chip--info">Mockup</span>';
+      $("#history-rows").insertBefore(hrow, $("#history-rows").children[2]);
+      c.hidden = true; /* demo: pretend it left the queue */
+      c.hidden = false;
+      updateBadge();
+    });
+  });
+  $("#refuse-btn").addEventListener("click", function(){
+    openModal(function(){
+      var c = $("#pending-card");
+      c.querySelector("h2").textContent = "DataStore API · 400 — refused";
+      c.querySelector(".chip").className = "chip chip--stop";
+      c.querySelector(".chip").textContent = "You refused";
+      var br = $(".btn-row", c); if (br) br.remove();
+      updateBadge();
+    });
+  });
+
+  /* ---- modal ---- */
+  var modalCb = null, lastFocus = null;
+  function openModal(cb){ modalCb = cb; lastFocus = document.activeElement; $("#backdrop").hidden = false; $("#modal-ok").focus(); }
+  function closeModal(){
+    $("#backdrop").hidden = true;
+    if (modalCb){ var cb = modalCb; modalCb = null; cb(); }
+    if (lastFocus) lastFocus.focus();
+  }
+  $("#modal-ok").addEventListener("click", closeModal);
+  $("#backdrop").addEventListener("click", function(e){ if (e.target === $("#backdrop")) closeModal(); });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && !$("#backdrop").hidden) closeModal();
+  });
+  $$("[data-modal]").forEach(function(b){ b.addEventListener("click", function(){ openModal(null); }); });
+
+  /* ---- guided tour ---- */
+  var TOUR = [
+    { nav:"rules",    text:"This is home. Your limits, your merchants, your agent — everything it may do, at a glance. Only your signature changes any of it." },
+    { nav:"requests", text:"Every payment the agent attempts lands here first. Type an amount and check it — you'll see the exact decision the gate makes on-chain." },
+    { nav:"waiting",  text:"Anything over your rules stops and waits here. Nothing moved. You approve once, refuse, or change the rules — always by wallet signature." },
+    { nav:"history",  text:"Every action, forever, in plain language. Each line opens its on-chain receipt — two rows here are real Sepolia transactions." },
+    { nav:"tour",     text:"And this walkthrough — so anyone you show the app to can learn it in one minute, crypto or not." }
+  ];
+  var tourStep = -1;
+  function showTour(i){
+    tourStep = i;
+    if (i >= TOUR.length){ endTour(); return; }
+    var s = TOUR[i];
+    location.hash = "#" + s.nav;
+    $$(".nav a").forEach(function(a){ a.classList.toggle("tour-hl", a.dataset.nav === s.nav); });
+    $("#tour-text").textContent = s.text;
+    $("#tour-caption").hidden = false;
+    $("#tour-next").textContent = i === TOUR.length - 1 ? "Finish" : "Next";
+  }
+  function endTour(){
+    tourStep = -1;
+    $("#tour-caption").hidden = true;
+    $$(".nav a").forEach(function(a){ a.classList.remove("tour-hl"); });
+  }
+  $("#tour-start").addEventListener("click", function(){ showTour(0); });
+  $("#tour-next").addEventListener("click", function(){ showTour(tourStep + 1); });
+  $("#tour-end").addEventListener("click", endTour);
+
+  navigate();
+})();
+</script>
+</body>
+</html>

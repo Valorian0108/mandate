@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "changes": [
+    {
+      "version": 1,
+      "kind": "ladder-change",
+      "agentId": "0x01bd3b9f890b7a660ae0158b4e29d548eb0c5c014ef7beaaaddf3088a41941be",
+      "seq": 1,
+      "from": "new",
+      "to": "probation",
+      "reason": "three clean sandbox runs, anchored on-chain",
+      "evidenceRoot": "0x2597520b6aa02a102ef12e361be5c3e24974355d40b4a52828595c4f995125b",
+      "evidenceCount": 4,
+      "at": 1792915527866,
+      "owner": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0",
+      "signature": {
+        "r": "0x5dcae14f26229d0fe5a5901247f00893ca9246f40ee980fe48bbcb7578d54a5",
+        "s": "0x4a9c71da32fc096b7c0c707ce8aa155a03c1323bdaac98cac5f53b1b048788c"
+      }
+    },
+    {
+      "version": 1,
+      "kind": "ladder-change",
+      "agentId": "0x01bd3b9f890b7a660ae0158b4e29d548eb0c5c014ef7beaaaddf3088a41941be",
+      "seq": 2,
+      "from": "probation",
+      "to": "trusted",
+      "reason": "Promoted from the console after four clean records and a verified on-chain anchor",
+      "evidenceRoot": "0x02597520b6aa02a102ef12e361be5c3e24974355d40b4a52828595c4f995125b",
+      "evidenceCount": 4,
+      "at": 1792918084515,
+      "owner": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0",
+      "signature": {
+        "r": "0x61d01afda2a994f204255d661cd80872f94b3a9cb32580a0d96b5101dd17ff5",
+        "s": "0x967f0891cdac07c056b67365774463e83ff5b6de1e9a6840557605587c0a54"
+      }
+    },
+    {
+      "version": 1,
+      "kind": "ladder-change",
+      "agentId": "0x00a852fe0f464f04954d7b1e49c544994d7eca7df5318c34d0faa7edf109b551",
+      "seq": 1,
+      "from": "new",
+      "to": "probation",
+      "reason": "three clean sandbox runs, anchored on-chain",
+      "evidenceRoot": "0x125c7a9c70faf8f294b3070def61c009166282845b67828bef7f6c0b9e34b96",
+      "evidenceCount": 4,
+      "at": 1793016261550,
+      "owner": "0x3166ad27f1bedee6af7520d71ee60e1bb3719ab2d26d52fc7fdfc5a3cb4fed0",
+      "signature": {
+        "r": "0x5620a1f65773618ed247b6c7bb32a3b6d7174a9932adb5e54c62cc762034ff",
+        "s": "0x57d4bbdb968ee1fdafb89bf3d090c6246fdc6684cf937129cc74abd98a9ddc0"
+      }
+    }
+  ]
+}
