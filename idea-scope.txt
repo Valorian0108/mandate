@@ -1,0 +1,126 @@
+====================================================================
+IDEA SCOPE — "mandate"
+An AI assistant that spends money — on an allowance you control.
+Written in plain language for outside review. No prior knowledge needed.
+====================================================================
+
+1) THE ONE-LINER
+You hire an AI assistant to handle buying for your small business.
+This app is where you give it an allowance, where anything over that
+allowance physically stops until you approve it, and where you watch
+every receipt land.
+
+2) THE PROBLEM
+AI agents are starting to act in the real world: purchasing, paying for
+services, running operations. Giving an AI access to money today means
+one of two bad options:
+  - give it nothing (then it can't do anything useful), or
+  - give it your keys and trust it (then one bug, hack, or misbehaving
+    agent can drain everything).
+Banks and wallets have no middle setting. And a "spending limit" inside
+a normal app is only a promise — the app's own servers can break it.
+
+3) THE SOLUTION
+A permission layer between the AI and the money. The owner sets rules
+in plain language:
+  - up to 150 per purchase
+  - up to 600 per month
+  - only at these 3 stores (the allowlist)
+Inside the rules the AI pays freely, automatically. Outside the rules
+nothing is "flagged for review" — it STOPS. Nothing is charged. The ask
+waits for the owner, who can:
+  - approve it once,
+  - refuse it, or
+  - change the rules.
+Every approval, rule change, and payment requires the owner's own
+signature (a wallet confirmation — like Face ID for money). The owner's
+key never lives on a server. Every action leaves a permanent, public
+receipt.
+
+The twist users feel but never see: the rules are not enforced by a
+company's server — they are enforced by the money rails themselves (a
+smart contract on Starknet; testnet for now). No one — not the app, not
+the AI, not the company behind either — can break the allowance.
+
+4) THE DEMO STORY (a day in the life)
+Morning: the assistant buys 120 of server time at CloudCompute —
+inside the rules; it just goes through and appears in Activity.
+Noon: it tries to buy 400 of market data — over the 150 limit. It
+stops. The app says: "DataStore wants 400. That's over your 150
+limit." The owner taps "Approve once" and confirms — done, rules
+unchanged. Or the owner raises the limit to 400 — signed, recorded,
+effective immediately. Every event lands in Activity with a permanent
+receipt one tap away.
+
+5) WHAT IS ALREADY BUILT (this is not a concept)
+- The on-chain enforcement contract (the "gate"): AI session key,
+  per-purchase cap, monthly window, merchant allowlist, owner-only rule
+  changes. 48 contract tests passing.
+- The permission engine + console app: rule management, agent asks,
+  verdicts, approvals with real wallet signatures, tamper-evident
+  history. 330 automated tests, zero skipped.
+- Live proofs on Starknet testnet (Sepolia): real signed rule changes,
+  real stops, real approvals — every transaction publicly verifiable.
+  Example: the owner raised the per-purchase limit to 150 from a real
+  browser wallet; the change is recorded on-chain forever.
+- Design: a clickable console mockup, and a locked design direction
+  ("a quiet instrument panel you'd trust with your money") with a
+  strict plain-language UI rule.
+
+6) WHO IT'S FOR (first wedge)
+- Solo founders and small businesses running AI agents that must pay
+  for things: compute, APIs, suppliers, shipping.
+- Later: families (an elder's shopping assistant on an allowance),
+  teams and DAOs (treasury agents), and any "AI touches money, human
+  must stay in control" situation.
+
+7) WHAT THE APP LOOKS LIKE (screens)
+- Rules: the allowance, monthly budget, approved stores — state at a
+  glance.
+- Requests: the AI's asks and instant verdicts (went through / stopped).
+- Waiting for you: anything needing the owner's decision, with a plain
+  explanation of why it stopped.
+- Activity: every action, forever; each line opens its receipt.
+- How it works: a one-minute guided tour for first-timers.
+Hard design ruling: NO crypto-native surface. No addresses, hashes,
+gas, or chain names on any screen. Crypto appears exactly twice: the
+confirmation popup when approving, and optional "show the receipt"
+drawers.
+
+8) DIFFERENTIATION
+- vs AI trading bots: this is not a strategy product; it is the
+  safety/permission layer for ANY spending agent.
+- vs bank/wallet spend limits: those are promises enforced by the
+  vendor's servers. This is enforced by the money rails; the vendor
+  itself cannot break it.
+- vs big-player agentic payments (Visa/Mastercard/Stripe programs,
+  x402, AP2): those keep enforcement inside corporate rails — the
+  platform is the enforcer. Here the USER is sovereign: their key,
+  their rules, nothing frozen or adjusted by a company.
+- User sovereignty is the product. It is the claim incumbents
+  structurally cannot make.
+
+9) HONEST LIMITS (today)
+- Testnet only (Sepolia). No real money yet.
+- Starknet-only enforcement.
+- The console works but still needs the plain-language reskin described
+  above — that is the next build.
+- One owner, one agent, a small merchant list. Multi-agent and
+  multi-user come later.
+- Signing depends on a Starknet browser wallet (Ready X / Argent X);
+  mainstream users would later need an embedded/abstracted wallet.
+
+10) THE QUESTIONS THIS DOC SHOULD HELP ANSWER
+- Is "an allowance for an AI employee" a pain people feel NOW, or is
+  it too early?
+- Who pays first: agent developers, solo founders, or platforms
+  embedding this as infrastructure?
+- Is "parental controls for AI money" instantly understandable to a
+  non-crypto person?
+- Does on-chain, user-sovereign enforcement actually matter to the
+  target user, or is it a nice-sounding feature?
+- What is the fastest credible wedge given the agentic-payments race?
+
+====================================================================
+End of scope. Repo: github.com/Valorian0108/mandate (private).
+====================================================================
