@@ -1450,3 +1450,50 @@ chain-verified, console-recorded decision. And the original story's ask —
 is now inside the mandate: same ask, different mandate, no human needed.
 
 
+
+## OBS-38 - 2026-10-28 - The owner-facing app is live against the real engine: five screens, zero crypto-native surface, and the jargon gate catches its own author
+
+**What was built.** `mandate-workspace/app/` - the tested console's engine
+wires to a completely new owner-facing UI (vanilla JS, no build step, no
+framework), served on port 4181 through a dev proxy that forwards `/api/`,
+`/vendor/` and the tested signer modules to the untouched console server on
+4173. permission-core changed by zero bytes; the AnchorGate reference copy
+stayed read-only. Screens: Rules, Requests, Waiting for you, Activity, How it
+works. Waiting/Activity are honest placeholders this phase (they say so, and
+Waiting shows the live pending count); Rules and Requests are fully wired.
+
+**The gate that guards the product rule.** `tools/check-jargon.mjs` makes
+"no crypto-native surface" mechanical: banned vocabulary only inside
+crypto-surface blocks, machine layer (data.js/serve.mjs) forbidden from
+rendering, every display-state error assignment must pass plainError(), every
+token in sRGB gamut, hex comments must equal computed hex, favicon hex must
+equal the accent's rendered hex, no colour literals in style.css, and the 44px
+control floor enforced per rule block.
+
+**It caught its own author, twice.** First run: 13 failures - three raw
+machine words in vocab.js's recognition patterns (now fenced: they read the
+machine's words, never emit them), `s.address` plumbing in app.js (field
+renamed to `id`; the word no longer exists in any UI file), an out-of-gamut
+surface token, and a hex comment that promised a colour the token did not
+render. Then the browser pixel probe caught what the gate's first version
+missed: `.btn-sm` rendered at 32px and `.quick` at 30px - violations of
+the 44px floor the tokens file itself declares with "no exceptions". Both
+fixed, and the floor is now a gate rule, not a hope. Re-probe: every
+interactive control measures exactly 44px.
+
+**Live proof, browser-driven.** Rules shows the chain's own truth: 150
+per-purchase, 150 monthly, spent 0, resets 27 Nov 2026, 2 of 3 stores
+approved, access until 18 May 2033, 10 of 10 actions left. Three asks filed
+through the real API, three honest verdicts: 120 to CloudCompute ALLOWED
+("This was a check against your rules. Nothing has been paid."); 400 BLOCKED
+("It is over your 150 per-purchase limit, so it stopped." + Decide-it link);
+ShipIt 120 BLOCKED ("ShipIt is not on your approved list, so it stopped.").
+Requests lists all 16 asks newest-first with plain outcomes ("raised the
+per-purchase limit - recorded"); the waiting badge reads 2; a full-body jargon
+scan of every screen finds zero machine words; the console is empty of errors;
+the accent renders pixel-exact #0776ea and the favicon matches.
+
+**The two new pending proposals are real state.** The 400-unit and ShipIt asks
+created genuine PENDING proposals on the server - kept (evidence is never
+removed) and they are exactly the material the Waiting screen's decision flow
+will consume next phase.

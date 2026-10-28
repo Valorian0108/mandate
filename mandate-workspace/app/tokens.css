@@ -1,0 +1,67 @@
+/* Design tokens - "Modern Minimalism, instrument-panel variant".
+   The same palette the approved mockup used: cool-white ground, ONE cobalt
+   signal colour, hairlines instead of shadows, a mono machine layer.
+   No glassmorphism, no neon, no atmospheric glow. */
+
+:root {
+  /* ground + ink */
+  --color-paper: oklch(98.5% 0.004 250);
+  --color-surface: oklch(99.2% 0.002 250);
+  --color-surface-2: oklch(97% 0.005 250);
+  --color-ink: oklch(24% 0.02 258);
+  --color-ink-2: oklch(34% 0.018 257);
+  --color-ink-3: oklch(52% 0.015 257);
+  --color-rule: oklch(90% 0.005 255);
+  --color-rule-2: oklch(83% 0.008 255);
+
+  /* the one signal colour (<5% of any screen).
+     Every value below is the LARGEST chroma that stays inside sRGB at this
+     lightness/hue, computed with the same oklch->sRGB math the slop-test gate
+     uses (tools/check-jargon.mjs re-verifies it). Out-of-gamut values would be
+     clipped by the browser and the favicon hex would stop matching. */
+  --color-accent: oklch(58% 0.195 256);        /* #0776ea */
+  --color-accent-deep: oklch(48% 0.160 256);   /* #065bb5 */
+  --color-accent-ink: oklch(98.5% 0.004 250);  /* #f8fafe */
+  --color-accent-soft: oklch(95% 0.022 256);   /* #e5effe */
+
+  /* the machine layer (dark instrument panel) */
+  --color-graphite: oklch(22% 0.016 260);
+  --color-graphite-2: oklch(26% 0.016 260);
+  --color-graphite-rule: oklch(36% 0.018 260);
+  --color-graphite-ink: oklch(92% 0.006 255);
+  --color-graphite-muted: oklch(66% 0.015 258);
+
+  /* meaning - all in-gamut (same rule as above) */
+  --color-ok: oklch(52% 0.120 158);        /* #067d4e */
+  --color-ok-soft: oklch(95% 0.035 158);   /* #dcf6e7 */
+  --color-wait: oklch(56% 0.118 75);       /* #9c6906 */
+  --color-wait-soft: oklch(95% 0.045 85);  /* #fcedce */
+  --color-stop: oklch(54% 0.170 25);       /* #bd3839 */
+  --color-stop-soft: oklch(95% 0.024 25);  /* #fee9e7 */
+
+  /* type */
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* space */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* shape + controls */
+  --radius-ctl: 6px;
+  --radius-card: 10px;
+  --control-h: 2.75rem;   /* 44px floor - every control, no exceptions */
+  --rail-w: 264px;
+
+  /* motion: Emil's curve, short durations, transform/opacity only */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+}

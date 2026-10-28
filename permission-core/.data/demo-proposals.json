@@ -1046,6 +1046,60 @@
       },
       "resolvedAt": 1793175976622,
       "ownerPublicKeyAtResolution": "0x4fb24b55f25e2018a28d1f62ad37d43a366d1282d875d438987a82cf951e7d2"
+    },
+    {
+      "id": "865d926c79cfcc1d",
+      "createdAt": 1793196975771,
+      "request": {
+        "user": "user:0x7d1d8cad365390adfb2f4f9f89277663c555d2eed790f1c4983c44a002570f1",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x079e0a000fc86b5e2b157b4e5bc2e2deee93499141f84c4214c30362bd55cf38",
+          "amount": "400",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "now": 1793196975
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "over-per-call-cap",
+        "reason": "GateAccount: amount over per-call cap",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "PENDING",
+      "resolution": null,
+      "signature": null,
+      "resolvedAt": null
+    },
+    {
+      "id": "de08b867a740b7b5",
+      "createdAt": 1793196990229,
+      "request": {
+        "user": "user:0x7d1d8cad365390adfb2f4f9f89277663c555d2eed790f1c4983c44a002570f1",
+        "agent": "agent:0x100d2c0e1428a218c21fbbdb88aa30570674e17a79003f39e62a08115806185",
+        "action": "spend:transfer",
+        "resource": "token:0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+        "context": {
+          "recipient": "0x290179d7dcf12b5f733a3680a42bf9e367437ac5486ac480ecd5d5b5fb8546",
+          "amount": "120",
+          "token": "0x28c46a86f0dd515ac006a822a68fcd7d284b7d1d89127f1392bf8826e6148",
+          "now": 1793196990
+        }
+      },
+      "blockedBecause": {
+        "verdict": "DENY",
+        "code": "recipient-not-allowed",
+        "reason": "GateAccount: recipient not allowed",
+        "gate": "spend"
+      },
+      "contextNote": "asked from the console",
+      "status": "PENDING",
+      "resolution": null,
+      "signature": null,
+      "resolvedAt": null
     }
   ]
 }
