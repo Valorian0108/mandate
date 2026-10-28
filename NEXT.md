@@ -553,3 +553,9 @@ unreadable demo hides real infrastructure (`product-shape.md`).
 - Live proof on Sepolia before anything is called done; a skipped check is announced,
   never silent.
 - What we learn goes into these files, including the failures.
+
+## Repo
+
+- Git repo: https://github.com/Valorian0108/mandate (private, main). First commit 84a44ad = Tracks 1-3 complete + Track 4 mockup.
+- Secrets excluded via .gitignore: gate-account/.sepolia/ (private keys), permission-core/.data/demo-agent-runtime.json (witness key), node_modules/, target/. Evidence ledgers (.data, public chain data) ARE committed.
+- Workflow from here: commit + push at the end of every work session.
