@@ -67,3 +67,18 @@ Nothing will be sent."); the cryptographic proof â€” digest, signature scheme,
 chain reads â€” behind a "Show the proof" toggle. The house rules still hold:
 every claim on screen remains verifiable; the change is where the proof lives,
 not whether it exists.
+
+## Demo use case — CHOSEN (2026-10-28)
+
+**AI agent as autonomous spender: it pays for its own work, the owner keeps the leash.**
+
+Scenario: agent runs a store's ops — buys compute, data, shipping — under an allowance
+(150/request, 600/month) and a vendor allowlist. In-rule payments are automatic; anything
+over stops and waits for the owner's wallet signature; every payment is a permanent
+chain receipt. This maps 1:1 onto the already-proven live Sepolia state (per-call 150,
+signed raise, recorded txs) — no new engineering. Chosen because: (1) already built,
+(2) understandable with zero crypto knowledge, (3) rides the 2026 agentic-payments wave
+with the one differentiator incumbents can't claim: user sovereignty enforced on-chain.
+
+Runner-up (parked, not rejected forever): AI trading agent — crowded lane, needs finance
+literacy; can be added later as scenario #2 on the same primitives.
