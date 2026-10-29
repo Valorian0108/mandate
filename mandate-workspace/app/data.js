@@ -80,7 +80,7 @@ export const broadcast = (payload) => call('/api/broadcast', payload);
 
 /** The network's own answer for one submission. */
 export const receipt = (txHash) =>
-  call(`/api/tx/receipt?txHash=${encodeURIComponent(txHash)}`);
+  call(`/api/tx/receipt?hash=${encodeURIComponent(txHash)}`);
 
 /** Price a wallet-carried decision. */
 export const outsidePlan = (proposalId) => call('/api/outside/plan', { proposalId });
@@ -104,19 +104,17 @@ export const outsideRecord = (proposalId, txHash) =>
  * node must surface as an error, never as an endless spinner.
  */
 export async function pollReceipt(txHash, { tries = 30, everyMs = 4000, onTick } = {}) {
-  let last = null;
   for (let i = 0; i < tries; i += 1) {
+    let out = null;
     try {
-      last = await receipt(txHash);
-    } catch (e) {
-      last = { error: String(e?.message ?? e) };
-    }
-    if (onTick) onTick(i + 1, tries, last);
-    const status = String(last?.status ?? last?.finality_status ?? '').toUpperCase();
-    if (['SUCCEEDED', 'REVERTED', 'ACCEPTED_ON_L1', 'ACCEPTED_ON_L2'].includes(status)) {
-      return last;
-    }
+      out = await receipt(txHash);
+    } catch { /* node unreachable - keep trying, honestly */ }
+    if (onTick) onTick(i + 1, tries, out);
+    // The server wraps its read as { final, receipt, submission, error }; the
+    // inner receipt is the object that carries execution_status. Return THAT on
+    // final, exactly as the proven console does - never the wrapper.
+    if (out?.final) return out.receipt;
     if (i < tries - 1) await new Promise((r) => setTimeout(r, everyMs));
   }
-  return last;
+  return null;
 }
