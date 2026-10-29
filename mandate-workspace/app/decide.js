@@ -24,6 +24,7 @@ import { resolutionDigest } from '/signer.js';
 import { connectWallet, detectWallets, short } from '/wallet.js';
 import {
   previewResolution, resolveProposal, outsidePlan, outsideWire, outsideRecord,
+  pollReceipt,
 } from './data.js';
 
 const norm = (a) => String(a ?? '').toLowerCase().replace(/^0x0+/, '0x');
@@ -447,5 +448,61 @@ export function receiptMachineHtml({ txHash, receipt, record } = {}) {
 export function errorMachineHtml(message) {
   if (!message) return '';
   return mstrip(mlabel('what the machine said') + mrow('error', message), true);
+}
+
+/**
+ * The persisted receipt for one entry in the Activity ledger: the owner's
+ * recorded decision, and - when it landed - the submission the server keeps and
+ * the network's own live answer. Built from what is stored forever, so it
+ * renders instantly with no network read; the caller may pass a `receipt` read
+ * afterwards to enrich it. Every value is escaped by mrow; nothing is trusted.
+ */
+export function recordReceiptMachineHtml({ proposal, submission, receipt } = {}) {
+  const parts = [];
+  if (proposal) {
+    const sig = proposal.signature ?? {};
+    parts.push(mstrip(
+      mlabel('your recorded decision') +
+      mrow('decision', JSON.stringify(proposal.resolution ?? null)) +
+      mrow('digest', proposal.digest ?? '') +
+      mrow('confirmed with key', proposal.ownerPublicKeyAtResolution ?? '') +
+      mrow('r', sig.r ?? '') +
+      mrow('s', sig.s ?? '') +
+      (proposal.signatureValidNow === undefined ? ''
+        : mrow('signature checks out now',
+          proposal.signatureValidNow ? 'yes' : 'no - the owner key has rotated since'))
+    ));
+  }
+  if (submission) {
+    parts.push(mstrip(
+      mlabel('what landed on your account') +
+      mrow('status', submission.status ?? '') +
+      mrow('tx hash', submission.tx_hash ?? '') +
+      mrow('recorded', submission.submittedAt ? new Date(submission.submittedAt).toISOString() : '') +
+      callsHtml(submission.calls) +
+      (submission.sideEffects ?? []).map((s, i) => mrow(`side effect ${i + 1}`, s)).join('') +
+      (submission.revert_reason ? mrow('revert reason', submission.revert_reason) : '')
+    ));
+  }
+  if (receipt) {
+    parts.push(receiptMachineHtml({ txHash: submission?.tx_hash ?? '', receipt }));
+  }
+  return parts.join('');
+}
+
+/**
+ * Read the network's own answer for a landed submission ONCE (no polling: a
+ * final transaction answers immediately). Returns the inner receipt, or null if
+ * the node cannot be reached or the submission never landed - the persisted
+ * record above still stands on its own without it.
+ */
+export async function liveReceipt(submission) {
+  const tx = submission?.tx_hash;
+  if (!tx) return null;
+  try {
+    return await pollReceipt(tx, { tries: 1 });
+  } catch {
+    return null;
+  }
 }
 // crypto-surface:end

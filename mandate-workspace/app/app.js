@@ -27,6 +27,7 @@ import {
   receiptOutcome, receiptErrorMessage,
   reviewMachineHtml, walletMachineHtml, walletPickerHtml, stageMachineHtml,
   planMachineHtml, receiptMachineHtml, resolutionMachineHtml, errorMachineHtml,
+  recordReceiptMachineHtml, liveReceipt,
 } from './decide.js';
 
 // ------------------------------------------------------------------ state
@@ -876,19 +877,126 @@ function renderDecision() {
   return ask + decisionCardHtml(p, m);
 }
 
+// ------------------------------------------------------------------ activity screen
+
+// The permanent record, rendered newest first. It is built from what the server
+// keeps forever: every submission (an action that landed on the account) joined
+// to the decision that produced it, plus every recorded decision that produced
+// no submission (a refusal, or an early change). Nothing pending appears here -
+// that is Waiting's job - and nothing is ever dropped, so the ledger and the
+// record can never disagree. `activityCache` is the exact list on screen, so a
+// receipt button's index always resolves to the row the user clicked.
+let activityCache = [];
+
+function activityEntries() {
+  const proposals = S.proposals ?? [];
+  const submissions = S.submissions ?? [];
+  const byId = new Map(proposals.map((p) => [p.id, p]));
+  const entries = [];
+  const covered = new Set();
+  for (const s of submissions) {
+    const p = byId.get(s.proposalId) ?? null;
+    if (p) covered.add(p.id);
+    entries.push({ proposal: p, submission: s, ts: s.submittedAt ?? 0 });
+  }
+  for (const p of proposals) {
+    if (covered.has(p.id) || p.status === 'PENDING') continue;
+    entries.push({ proposal: p, submission: null, ts: p.resolvedAt ?? p.createdAt ?? 0 });
+  }
+  entries.sort((a, b) => b.ts - a.ts);
+  return entries;
+}
+
+/** The plain words for one ledger line. No machine field is ever rendered here;
+ *  the receipt drawer (decide.js, fenced) is the only place those appear. */
+function activityLine(e) {
+  const p = e.proposal;
+  const s = e.submission;
+  const res = p?.resolution ?? null;
+  const kind = res?.amendment?.kind ?? res?.type ?? null;
+  const ctx = p?.request?.context ?? {};
+  const store = storeName(ctx.recipient);
+  const amt = ctx.amount === null || ctx.amount === undefined || ctx.amount === ''
+    ? '' : ` · ${units(ctx.amount)}`;
+
+  let title;
+  if (kind === 'raise-per-call-cap') title = `You raised your per-purchase limit to ${units(res.amendment.maxPerCall)}`;
+  else if (kind === 'raise-window-cap') title = `You raised this month's budget to ${units(res.amendment.maxPerWindow)}`;
+  else if (kind === 'allow-recipient') title = `You approved ${store} as a store`;
+  else if (kind === 'execute-once') title = `You approved a payment to ${store}${amt}`;
+  else if (res?.type === 'decline') title = ctx.recipient ? `You said no to ${store}${amt}` : 'You said no to a request';
+  else if (s) title = 'A change you confirmed landed on your account';
+  else title = 'A decision you recorded';
+
+  let chipClass; let chipWord; let sub;
+  if (s && s.status === 'SUCCEEDED') { chipClass = 'chip-allow'; chipWord = 'Live'; sub = 'Confirmed by you · recorded permanently'; }
+  else if (s && s.status === 'PENDING') { chipClass = 'chip-ask'; chipWord = 'In progress'; sub = 'Still being confirmed'; }
+  else if (s && s.status === 'REVERTED') { chipClass = 'chip-deny'; chipWord = 'Did not go through'; sub = 'It did not go through · nothing changed'; }
+  else if (res?.type === 'decline') { chipClass = 'chip-quiet'; chipWord = 'recorded'; sub = 'Recorded permanently · nothing was paid'; }
+  else { chipClass = 'chip-quiet'; chipWord = 'recorded'; sub = 'Recorded permanently'; }
+
+  return { title, sub, chipClass, chipWord };
+}
+
 function renderActivity() {
-  return `<div class="card soon-card">
+  if (S.loadingProposals && !S.proposals) return skelHtml(2);
+  if (!S.proposals) return errorCardHtml(S.proposalsError);
+
+  activityCache = activityEntries();
+  if (!activityCache.length) {
+    return `<div class="card"><div class="empty">Nothing has happened yet. When you change a rule or make a payment, it is written down here forever, with a receipt you can open.</div></div>`;
+  }
+
+  const rows = activityCache.map((e, i) => {
+    const line = activityLine(e);
+    return `<div class="req">
+      <div class="req-main">
+        <div class="req-name">${esc(line.title)}</div>
+        <div class="req-when">${dayText(e.ts / 1000)} · ${esc(agoText(e.ts))}</div>
+      </div>
+      <div class="req-mid">
+        <div class="req-rule">${esc(line.sub)}</div>
+      </div>
+      <div class="req-side">
+        <span class="chip ${line.chipClass}">${esc(line.chipWord)}</span>
+        <button class="btn btn-sm" type="button" data-action="record-receipt" data-key="${i}">Show the receipt</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="card">
     <div class="card-head">
       <div>
-        <div class="card-label">being built next</div>
-        <div class="card-title">The permanent record</div>
+        <div class="card-label">kept forever, newest first</div>
+        <div class="card-title">Every change and payment</div>
       </div>
+      <span class="chip chip-quiet tabular">${activityCache.length}</span>
     </div>
-    <div class="card-body">
-      <p>Every rule change and every payment will be listed here in order, each with a receipt you can open. Nothing is ever removed.</p>
-      <p class="card-note">For now, the <a href="#/requests">Requests</a> screen already shows every ask and how it ended.</p>
-    </div>
+    <div>${rows}</div>
+    <div class="card-body"><p class="card-note note-flat">Nothing here can be edited or deleted, and every line keeps its receipt. A line marked Live landed on your account: open its receipt to read the network's own answer.</p></div>
   </div>`;
+}
+
+/** Open the receipt for one ledger line. The persisted record renders at once;
+ *  if the line landed, the network's own answer is read once and appended. */
+async function openRecordReceipt(index) {
+  const entry = activityCache[Number(index)];
+  if (!entry) return;
+  els.drawerTitle.textContent = 'The receipt';
+  const draw = (receipt) => {
+    els.drawerBody.innerHTML = recordReceiptMachineHtml({
+      proposal: entry.proposal, submission: entry.submission, receipt,
+    }) || '<p>Nothing was recorded for this decision.</p>';
+  };
+  draw(null);
+  els.drawer.hidden = false;
+  els.backdrop.hidden = false;
+  if (entry.submission) {
+    const receipt = await liveReceipt(entry.submission);
+    // Only repaint if this receipt is still the one open (the user may have
+    // closed it or opened another while the read was in flight).
+    if (!els.drawer.hidden && activityCache[Number(index)] === entry) draw(receipt);
+  }
 }
 
 // ------------------------------------------------------------------ how screen
@@ -1484,6 +1592,7 @@ els.screen.addEventListener('click', (ev) => {
   if (action === 'review') { onReview(); return; }
   if (action === 'finish') { runFlow(); return; }
   if (action === 'receipt') { openReceipt(); return; }
+  if (action === 'record-receipt') { openRecordReceipt(el.dataset.key); return; }
   if (action === 'quick') {
     const inp = $('ask-amount');
     if (inp) {
