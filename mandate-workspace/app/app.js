@@ -660,6 +660,33 @@ function justDecidedHtml(d) {
   </div>`;
 }
 
+/** A recorded change the live rules have already overtaken. Landing it now
+ *  would move the rules BACKWARDS (an old raise to 20 when the live limit is
+ *  150), so it is never offered as "finish it". Returns the plain reason, or
+ *  null when the change is still meaningful to land - or when the live rules
+ *  are not read yet, because unproven means treated as finishable, exactly
+ *  like before. One-off payments are never superseded: they are money, not
+ *  rules, and a recorded approval stays finishable until it lands. */
+function supersededReason(p) {
+  const m = S.mandate?.mandate;
+  if (!m || p.status !== 'AMENDED') return null;
+  const a = p.resolution?.amendment;
+  if (!a) return null;
+  const c = p.request?.context ?? {};
+  try {
+    if (a.kind === 'raise-per-call-cap' && BigInt(m.maxPerCall) >= BigInt(a.maxPerCall)) {
+      return `Your per-purchase limit is already ${units(m.maxPerCall)}, at or past the ${units(a.maxPerCall)} this decision asked for.`;
+    }
+    if (a.kind === 'raise-window-cap' && BigInt(m.maxPerWindow) >= BigInt(a.maxPerWindow)) {
+      return `This month's budget is already ${units(m.maxPerWindow)}, at or past the ${units(a.maxPerWindow)} this decision asked for.`;
+    }
+    if (a.kind === 'allow-recipient' && isApproved(a.recipient ?? c.recipient, m.allowedRecipients ?? [])) {
+      return `${storeName(a.recipient ?? c.recipient)} is already an approved store.`;
+    }
+  } catch { /* a malformed target is not provably superseded; the old path stands */ }
+  return null;
+}
+
 function renderWaiting() {
   const w = S.waiting;
   if (w.id) return renderDecision();
@@ -668,12 +695,13 @@ function renderWaiting() {
 
   const byNewest = (a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0);
   const pending = S.proposals.filter((p) => p.status === 'PENDING').sort(byNewest);
-  const inflight = S.proposals
-    .filter((p) => EXECUTABLE.includes(p.status) && !finalSubmissionFor(p.id))
-    .sort(byNewest);
+  const inflightAll = S.proposals
+    .filter((p) => EXECUTABLE.includes(p.status) && !finalSubmissionFor(p.id));
+  const superseded = inflightAll.filter((p) => supersededReason(p)).sort(byNewest);
+  const inflight = inflightAll.filter((p) => !supersededReason(p)).sort(byNewest);
   const doneCard = w.done ? justDecidedHtml(w.done) : '';
 
-  if (!pending.length && !inflight.length) {
+  if (!pending.length && !inflight.length && !superseded.length) {
     return `${doneCard}<div class="card"><div class="empty">Nothing is waiting on you. When your assistant asks for something your rules do not clear on the spot, it shows up here, and nothing moves until you decide.</div></div>`;
   }
 
@@ -690,6 +718,22 @@ function renderWaiting() {
     <div class="card-body"><p class="card-note note-flat">Your decision is recorded, but the change itself has not landed on your account yet. Until it lands, your rules read exactly as before.</p></div>
   </div>` : '';
 
+  // Recorded decisions the live rules have overtaken. Kept on screen - evidence
+  // is never removed - but with no way to land them, because landing an old
+  // change would tighten today's rules. The full record lives in Activity.
+  const supersededCard = superseded.length ? `<div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-label">nothing left to land</div>
+        <div class="card-title">Already covered by your rules</div>
+      </div>
+      <span class="chip chip-quiet tabular">${superseded.length}</span>
+    </div>
+    <div>${superseded.map((p) => waitRowHtml(p,
+    '<span class="req-outcome">already covered</span>')).join('')}</div>
+    <div class="card-body"><p class="card-note note-flat">Each of these recorded decisions asked for less than your rules give you today, so landing one now would move your rules backwards. There is nothing to finish, and each one stays in <a href="#/activity">Activity</a> forever.</p></div>
+  </div>` : '';
+
   const pendingCard = pending.length ? `<div class="card">
     <div class="card-head">
       <div>
@@ -702,7 +746,7 @@ function renderWaiting() {
     `<a class="btn btn-sm" href="#/waiting/${esc(p.id)}">Decide</a>`)).join('')}</div>
   </div>` : '';
 
-  return `${doneCard}${inflightCard}${pendingCard}`;
+  return `${doneCard}${inflightCard}${pendingCard}${supersededCard}`;
 }
 
 // ------------------------------------------------------------------ decision view
@@ -853,6 +897,27 @@ function resumeHtml(p) {
   </div>`;
 }
 
+/** The deep-link view for a recorded decision the live rules have overtaken:
+ *  the honest sentence instead of a land button (landing would tighten today's
+ *  rules). The record itself stays in Activity forever. */
+function supersededHtml(p, reason) {
+  const c = p.request?.context ?? {};
+  return `<div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-label">nothing left to land</div>
+        <div class="card-title">${esc(storeName(c.recipient))} · ${esc(units(c.amount))}</div>
+      </div>
+      <span class="chip ${statusClass(p.status)}">${esc(statusWord(p.status))}</span>
+    </div>
+    <div class="card-body">
+      <p>${esc(reason)} Landing this recorded decision now would move your rules backwards, so there is nothing to finish.</p>
+      <p class="decision-actions"><a class="btn btn-quiet" href="#/waiting">Back to the list</a></p>
+      <p class="card-note">The decision stays recorded forever - you can open its record from <a href="#/activity">Activity</a>.</p>
+    </div>
+  </div>`;
+}
+
 function renderDecision() {
   const w = S.waiting;
   const p = proposalById(w.id);
@@ -865,7 +930,10 @@ function renderDecision() {
   }
   const sub = finalSubmissionFor(p.id);
   if (p.status === 'DECLINED' || sub) return settledHtml(p, sub);
-  if (EXECUTABLE.includes(p.status)) return resumeHtml(p);
+  if (EXECUTABLE.includes(p.status)) {
+    const reason = supersededReason(p);
+    return reason ? supersededHtml(p, reason) : resumeHtml(p);
+  }
 
   const m = S.mandate?.mandate;
   const ask = askFactsCardHtml(p);

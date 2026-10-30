@@ -329,10 +329,20 @@ export async function chainOwnerPublicKey({ statePath } = {}) {
   const { readFileSync: rf } = await import('node:fs');
   const state = JSON.parse(rf(path, 'utf8'));
   const { call } = await import('./mandate-reader.mjs');
+  // Follow the state file's verified endpoint (OBS-43): the reader's module
+  // default is the discontinued Cartridge URL, and the owner-key path - the one
+  // read that binds every approval to the chain - must never silently fall
+  // back to a hardcoded node. Missing record = loud failure, not a guess.
+  const rpcUrl = state.rpc_endpoints_verified?.cartridge?.url;
+  if (!rpcUrl) {
+    throw new Error('state file has no rpc_endpoints_verified.cartridge.url - ' +
+      'refusing to read the owner key through a hardcoded endpoint');
+  }
   const [pub] = await call(
     state.contracts.gate_account.address,
     state.selectors.get_public_key,
     [],
+    { rpcUrl },
   );
   return pub;
 }

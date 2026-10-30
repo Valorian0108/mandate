@@ -81,7 +81,9 @@ receipt one tap away.
 - Live proofs on Starknet testnet (Sepolia): real signed rule changes,
   real stops, real approvals — every transaction publicly verifiable.
   Example: the owner raised the per-purchase limit to 150 from a real
-  browser wallet; the change is recorded on-chain forever.
+  browser wallet, then approved a new store and raised the monthly
+  budget to 600 — both through the owner app itself; every change is
+  recorded on-chain forever.
 - Design: a clickable console mockup, and a locked design direction
   ("a quiet instrument panel you'd trust with your money") with a
   strict plain-language UI rule.
@@ -122,8 +124,10 @@ drawers.
 9) HONEST LIMITS (today)
 - Testnet only (Sepolia). No real money yet.
 - Starknet-only enforcement.
-- The console works but still needs the plain-language reskin described
-  above — that is the next build.
+- The plain-language owner app described above is BUILT and running
+  against the live testnet state: five screens, real wallet
+  confirmations, receipt drawers, zero crypto jargon (enforced by an
+  automated gate). Polish passes are ongoing.
 - One owner, one agent, a small merchant list. Multi-agent and
   multi-user come later.
 - Signing depends on a Starknet browser wallet (Ready X / Argent X);
