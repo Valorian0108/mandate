@@ -237,10 +237,13 @@ async function main() {
   check('the owner anchored the root through the GateAccount',
     anchorTx.result.status === 'SUCCEEDED', anchorTx.result.tx_hash);
 
+  // The chain read follows the state file's verified endpoint (the reader's
+  // module default is the discontinued Cartridge URL, dead since 2026-10-30).
+  const rpcOpts = { rpcUrl: state.rpc_endpoints_verified.cartridge.url };
   const [chainRoot, chainCount] = await call(
-    registry, state.selectors.get_anchor, [identity.agentId, gate]);
+    registry, state.selectors.get_anchor, [identity.agentId, gate], rpcOpts);
   const [chainAnchorCount] = await call(
-    registry, state.selectors.get_anchor_count, [identity.agentId, gate]);
+    registry, state.selectors.get_anchor_count, [identity.agentId, gate], rpcOpts);
   check('the chain reads back the same root and count',
     BigInt(chainRoot) === BigInt(root) && Number(BigInt(chainCount)) === count,
     `root=${chainRoot} count=${chainCount}`);

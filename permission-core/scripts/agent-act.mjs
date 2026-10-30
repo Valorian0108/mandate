@@ -120,9 +120,12 @@ async function main() {
   const count = records.length;
 
   // What the chain holds right now. The anchor SHOULD be behind - that gap is
-  // exactly what the console's anchor panel exists to close.
+  // exactly what the console's anchor panel exists to close. The read follows
+  // the state file's verified endpoint (the reader's module default is the
+  // discontinued Cartridge URL, dead since 2026-10-30).
   const [chainRoot, chainCountRaw] = await call(
-    registry, state.selectors.get_anchor, [identity.agentId, gate]);
+    registry, state.selectors.get_anchor, [identity.agentId, gate],
+    { rpcUrl: state.rpc_endpoints_verified.cartridge.url });
   const chainCount = Number(BigInt(chainCountRaw));
   const chainMatches = BigInt(chainRoot) === BigInt(root) && chainCount === count;
 

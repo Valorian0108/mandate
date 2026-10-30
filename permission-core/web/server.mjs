@@ -279,18 +279,27 @@ export function createConsoleServer(options = {}) {
   // (OBS-08), exactly like readMandate/dryRunEstimate above. Selectors come
   // from the state file's recorded set (verified from three independent
   // sources at stage 1) - never retyped, never re-derived here.
+  // 2026-10-30: Cartridge discontinued its public Sepolia RPC (HTTP 410 "starknet
+  // sepolia is discontinued and no longer served"), and mandate-reader's call()
+  // module default IS that dead endpoint. Every chainCall issued from here binds
+  // the state file's verified URL - the same record the rpcCall sites above read
+  // - so the record decides which node answers, never a hardcoded default.
+  const chainCallVerified = (contract, selector, calldata) =>
+    chainCall(contract, selector, calldata,
+      { rpcUrl: loadState().rpc_endpoints_verified.cartridge.url });
+
   const readController = options.readController
-    ?? ((gate) => chainCall(gate, loadState().selectors.get_wallet_controller, []));
+    ?? ((gate) => chainCallVerified(gate, loadState().selectors.get_wallet_controller, []));
   const readControllerPublicKey = options.readControllerPublicKey
     ?? ((controller) => resolveControllerPublicKey(
-      chainCall, controller, loadState().selectors.get_public_key, selectorFromName));
+      chainCallVerified, controller, loadState().selectors.get_public_key, selectorFromName));
   // Direct get_public_key probe for /api/chain/key: WHICH getter answered
   // decides the signature shape the browser should expect, so the endpoint
   // reports it. Injectable like every other chain read (OBS-08).
   const readPublicKey = options.readPublicKey
-    ?? ((addr) => chainCall(addr, loadState().selectors.get_public_key, []));
+    ?? ((addr) => chainCallVerified(addr, loadState().selectors.get_public_key, []));
   const readOutsideNonce = options.readOutsideNonce
-    ?? ((gate, nonce) => chainCall(
+    ?? ((gate, nonce) => chainCallVerified(
       gate, loadState().selectors.is_valid_outside_execution_nonce, [nonce]));
   // The relayer: the deployer account, a GAS-ONLY infrastructure key (documented
   // in state.json; it is not the owner and holds no mandate authority). The
@@ -584,9 +593,9 @@ export function createConsoleServer(options = {}) {
       };
     }
     try {
-      const [root, count] = await chainCall(
+      const [root, count] = await chainCallVerified(
         registry, selectors.get_anchor, [agentId, anchorer]);
-      const [anchorCount] = await chainCall(
+      const [anchorCount] = await chainCallVerified(
         registry, selectors.get_anchor_count, [agentId, anchorer]);
       const recorded = [...(state.layer_d?.anchors ?? [])]
         .reverse().find((a) => normHex(a.agent_id) === normHex(agentId)) ?? null;

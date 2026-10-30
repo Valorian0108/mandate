@@ -90,10 +90,14 @@ test('live: engine verdicts match the three real Sepolia outcomes', async (t) =>
   //    drift - the same doctrine as 2b's cap pin.
   const state = JSON.parse(readFileSync(
     new URL('../../gate-account/.sepolia/state.json', import.meta.url), 'utf8'));
+  // The direct chain read follows the state file's verified endpoint, exactly
+  // like readLiveMandate does (2026-10-30: the module default is Cartridge,
+  // which is discontinued - HTTP 410; the record is the source of truth).
   const [strangerFlag] = await call(
     state.contracts.gate_account.address,
     state.selectors.is_recipient_allowed,
     [policy.sessionPublicKey, policy.token, STRANGER],
+    { rpcUrl: state.rpc_endpoints_verified.cartridge.url },
   );
   const strangerAllowed = BigInt(strangerFlag) === 1n;
   const stranger = decide(STRANGER, 5);

@@ -16,6 +16,11 @@
 
 import { readFileSync } from 'node:fs';
 
+// The discontinued default. Cartridge killed this public endpoint on 2026-10-30
+// (HTTP 410 "starknet sepolia is discontinued and no longer served"); it stays
+// only so call() has a loud-failing fallback when no rpcUrl is injected.
+// readLiveMandate passes the live URL from the state file, and the evidence of
+// the 410 is recorded in that file's rpc_endpoints_verified.dead list.
 const RPC = 'https://api.cartridge.gg/x/starknet/sepolia';
 
 let rpcId = 0;
@@ -75,6 +80,18 @@ export async function readLiveMandate(statePath) {
     new URL('../../gate-account/.sepolia/state.json', import.meta.url);
   const state = JSON.parse(readFileSync(path, 'utf8'));
 
+  // Follow the run's own record for which node to read from (the OBS-40
+  // candidate-list precedent): the verified endpoint lives in the state file,
+  // under its historical `cartridge` key, and the module default above is a
+  // discontinued endpoint that must never be used silently. Missing record =
+  // loud failure, not a guess.
+  const rpcUrl = state.rpc_endpoints_verified?.cartridge?.url;
+  if (!rpcUrl) {
+    throw new Error('state file has no rpc_endpoints_verified.cartridge.url - ' +
+      'refusing to read the chain through a hardcoded endpoint');
+  }
+  const opts = { rpcUrl };
+
   const GATE = state.contracts.gate_account.address;
   const TOKEN = state.contracts.token.address;
   const SESSION = state.keys.agent_session.session_public_key;
@@ -87,11 +104,11 @@ export async function readLiveMandate(statePath) {
     .map((name) => sel[name]);
 
   const [sessionRaw, policyRaw] = await Promise.all([
-    call(GATE, sel.get_session_data, [SESSION]),
-    call(GATE, sel.get_spending_policy, [SESSION, TOKEN]),
+    call(GATE, sel.get_session_data, [SESSION], opts),
+    call(GATE, sel.get_spending_policy, [SESSION, TOKEN], opts),
   ]);
   const allowedFlags = await Promise.all(
-    candidates.map((r) => call(GATE, sel.is_recipient_allowed, [SESSION, TOKEN, r])),
+    candidates.map((r) => call(GATE, sel.is_recipient_allowed, [SESSION, TOKEN, r], opts)),
   );
 
   const [validUntil, maxCalls, callsUsed, entrypointsLen] = sessionRaw.map(BigInt);
